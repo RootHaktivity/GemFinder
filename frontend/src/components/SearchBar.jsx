@@ -142,14 +142,14 @@ export default function SearchBar({ onSearch, onSurprise, loading, history = [],
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search GitHub repos… (e.g. 'rust cli', 'self-hosted dashboard')"
-              className="w-full px-6 py-4 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all"
+              className="w-full px-6 py-4 bg-slate-900 border border-slate-700/50 rounded-lg text-cyan-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/50 transition-all font-mono"
               disabled={loading}
             />
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="btn-primary px-8 py-4 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+            className="btn-primary px-8 py-4 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap shadow-lg shadow-cyan-500/30"
           >
             {loading ? '🔄' : '🔍'} Search
           </button>
@@ -162,13 +162,13 @@ export default function SearchBar({ onSearch, onSurprise, loading, history = [],
             onClick={() => setShowAdvanced((v) => !v)}
             className={`flex items-center gap-2 text-sm px-3 py-1.5 rounded-lg border transition-colors ${
               showAdvanced || hasActiveFilters
-                ? 'border-blue-500 text-blue-400 bg-blue-500 bg-opacity-10'
-                : 'border-gray-600 text-gray-400 hover:border-gray-500 hover:text-gray-300'
+                ? 'border-cyan-500/70 text-cyan-400 bg-cyan-500/10'
+                : 'border-slate-600/50 text-slate-400 hover:border-slate-500/70 hover:text-cyan-100'
             }`}
           >
             <span>⚙️ Advanced Filters</span>
             {hasActiveFilters && (
-              <span className="bg-blue-500 text-white text-xs rounded-full px-1.5 py-0.5 leading-none">
+              <span className="bg-cyan-500/80 text-slate-900 text-xs rounded-full px-1.5 py-0.5 leading-none font-bold">
                 ON
               </span>
             )}
@@ -187,11 +187,11 @@ export default function SearchBar({ onSearch, onSurprise, loading, history = [],
 
         {/* Advanced filters panel */}
         {showAdvanced && (
-          <div className="bg-gray-800 border border-gray-700 rounded-xl p-5 mb-4 space-y-4">
+          <div className="bg-slate-950/50 border border-slate-700/50 rounded-xl p-5 mb-4 space-y-4 backdrop-blur-sm">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Language */}
               <div>
-                <label className="block text-xs text-gray-400 mb-1.5 font-medium uppercase tracking-wide">
+                <label className="block text-xs text-slate-400 mb-1.5 font-medium uppercase tracking-wide">
                   Language
                 </label>
                 <select
@@ -199,7 +199,7 @@ export default function SearchBar({ onSearch, onSurprise, loading, history = [],
                   onChange={(e) =>
                     setFilter('lang', e.target.value === 'Any' ? '' : e.target.value)
                   }
-                  className="w-full bg-gray-900 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full bg-slate-900 border border-slate-700/50 rounded-lg px-3 py-2 text-cyan-100 text-sm focus:outline-none focus:border-cyan-500"
                 >
                   {LANGUAGES.map((l) => (
                     <option key={l} value={l === 'Any' ? '' : l}>
@@ -211,13 +211,13 @@ export default function SearchBar({ onSearch, onSurprise, loading, history = [],
 
               {/* Min Stars */}
               <div>
-                <label className="block text-xs text-gray-400 mb-1.5 font-medium uppercase tracking-wide">
+                <label className="block text-xs text-slate-400 mb-1.5 font-medium uppercase tracking-wide">
                   Minimum Stars
                 </label>
                 <select
                   value={filters.min_stars}
                   onChange={(e) => setFilter('min_stars', Number(e.target.value))}
-                  className="w-full bg-gray-900 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full bg-slate-900 border border-slate-700/50 rounded-lg px-3 py-2 text-cyan-100 text-sm focus:outline-none focus:border-cyan-500"
                 >
                   {MIN_STARS_OPTIONS.map((o) => (
                     <option key={o.value} value={o.value}>
@@ -229,13 +229,13 @@ export default function SearchBar({ onSearch, onSurprise, loading, history = [],
 
               {/* Sort By */}
               <div>
-                <label className="block text-xs text-gray-400 mb-1.5 font-medium uppercase tracking-wide">
+                <label className="block text-xs text-slate-400 mb-1.5 font-medium uppercase tracking-wide">
                   Sort By
                 </label>
                 <select
                   value={filters.sort}
                   onChange={(e) => setFilter('sort', e.target.value)}
-                  className="w-full bg-gray-900 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full bg-slate-900 border border-slate-700/50 rounded-lg px-3 py-2 text-cyan-100 text-sm focus:outline-none focus:border-cyan-500"
                 >
                   {SORT_OPTIONS.map((o) => (
                     <option key={o.value} value={o.value}>
@@ -247,13 +247,13 @@ export default function SearchBar({ onSearch, onSurprise, loading, history = [],
 
               {/* OS Compatibility */}
               <div>
-                <label className="block text-xs text-gray-400 mb-1.5 font-medium uppercase tracking-wide">
+                <label className="block text-xs text-slate-400 mb-1.5 font-medium uppercase tracking-wide">
                   OS Compatibility
                 </label>
                 <select
                   value={filters.os}
                   onChange={(e) => setFilter('os', e.target.value)}
-                  className="w-full bg-gray-900 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full bg-slate-900 border border-slate-700/50 rounded-lg px-3 py-2 text-cyan-100 text-sm focus:outline-none focus:border-cyan-500"
                 >
                   {OS_OPTIONS.map((o) => (
                     <option key={o.value} value={o.value}>
@@ -266,13 +266,13 @@ export default function SearchBar({ onSearch, onSurprise, loading, history = [],
               {/* Category */}
               <div className="sm:col-span-2">
                 <div className="flex items-center justify-between mb-1.5">
-                  <label className="block text-xs text-gray-400 font-medium uppercase tracking-wide">
+                  <label className="block text-xs text-slate-400 font-medium uppercase tracking-wide">
                     Category
                   </label>
                   <button
                     type="button"
                     onClick={() => { setShowAddCat((v) => !v); setCatError(''); setCatSuccess(''); }}
-                    className="text-xs text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-1"
+                    className="text-xs text-cyan-400 hover:text-emerald-400 transition-colors flex items-center gap-1"
                   >
                     {showAddCat ? '✕ Cancel' : '➕ Add Custom'}
                   </button>
@@ -282,7 +282,7 @@ export default function SearchBar({ onSearch, onSurprise, loading, history = [],
                   value={filters.category}
                   onChange={(e) => setFilter('category', e.target.value)}
                   disabled={catLoading}
-                  className="w-full bg-gray-900 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500 disabled:opacity-50"
+                  className="w-full bg-slate-900 border border-slate-700/50 rounded-lg px-3 py-2 text-cyan-100 text-sm focus:outline-none focus:border-cyan-500 disabled:opacity-50"
                 >
                   <option value="">Any Category</option>
                   {builtinCategories.length > 0 && (
@@ -305,10 +305,10 @@ export default function SearchBar({ onSearch, onSurprise, loading, history = [],
                 {showAddCat && (
                   <form
                     onSubmit={handleAddCategory}
-                    className="mt-3 p-3 bg-gray-900 border border-gray-600 rounded-lg space-y-2"
+                    className="mt-3 p-3 bg-slate-900/70 border border-slate-700/50 rounded-lg space-y-2 backdrop-blur-sm"
                   >
-                    <p className="text-xs text-gray-400">
-                      Add a topic-based category. It will be visible to <span className="text-blue-400 font-medium">all users</span> once saved.
+                    <p className="text-xs text-slate-400">
+                      Add a topic-based category. It will be visible to <span className="text-cyan-400 font-medium">all users</span> once saved.
                     </p>
                     <div className="flex gap-2">
                       <input
@@ -317,7 +317,7 @@ export default function SearchBar({ onSearch, onSurprise, loading, history = [],
                         onChange={(e) => setNewCatValue(e.target.value)}
                         placeholder="topic-slug (e.g. blockchain)"
                         maxLength={30}
-                        className="flex-1 bg-gray-800 border border-gray-600 rounded-lg px-3 py-1.5 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                        className="flex-1 bg-slate-800/50 border border-slate-700/50 rounded-lg px-3 py-1.5 text-cyan-100 text-sm placeholder-slate-500 focus:outline-none focus:border-cyan-500 font-mono"
                         disabled={catSubmitting}
                       />
                       <input
@@ -326,13 +326,13 @@ export default function SearchBar({ onSearch, onSurprise, loading, history = [],
                         onChange={(e) => setNewCatLabel(e.target.value)}
                         placeholder="Display name (optional)"
                         maxLength={40}
-                        className="flex-1 bg-gray-800 border border-gray-600 rounded-lg px-3 py-1.5 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                        className="flex-1 bg-slate-800/50 border border-slate-700/50 rounded-lg px-3 py-1.5 text-cyan-100 text-sm placeholder-slate-500 focus:outline-none focus:border-cyan-500 font-mono"
                         disabled={catSubmitting}
                       />
                       <button
                         type="submit"
                         disabled={catSubmitting || !newCatValue.trim()}
-                        className="px-4 py-1.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm rounded-lg transition-colors whitespace-nowrap"
+                        className="px-4 py-1.5 bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 disabled:opacity-50 disabled:cursor-not-allowed text-slate-900 text-sm rounded-lg transition-colors whitespace-nowrap font-bold shadow-lg shadow-cyan-500/30"
                       >
                         {catSubmitting ? '⏳' : '✓ Save'}
                       </button>
@@ -355,7 +355,7 @@ export default function SearchBar({ onSearch, onSurprise, loading, history = [],
                     />
                     <div
                       className={`w-10 h-6 rounded-full transition-colors ${
-                        filters.active_only ? 'bg-blue-500' : 'bg-gray-600'
+                        filters.active_only ? 'bg-cyan-500' : 'bg-slate-700'
                       }`}
                     ></div>
                     <div
@@ -365,8 +365,8 @@ export default function SearchBar({ onSearch, onSurprise, loading, history = [],
                     ></div>
                   </div>
                   <div>
-                    <p className="text-sm text-white font-medium">Active Only</p>
-                    <p className="text-xs text-gray-400">Pushed in last 6 months</p>
+                    <p className="text-sm text-cyan-100 font-medium">Active Only</p>
+                    <p className="text-xs text-slate-400">Pushed in last 6 months</p>
                   </div>
                 </label>
               </div>
@@ -377,7 +377,7 @@ export default function SearchBar({ onSearch, onSurprise, loading, history = [],
                 <button
                   type="button"
                   onClick={resetFilters}
-                  className="text-xs text-gray-400 hover:text-red-400 transition-colors"
+                  className="text-xs text-slate-400 hover:text-red-400 transition-colors"
                 >
                   ✕ Reset filters
                 </button>
@@ -390,9 +390,9 @@ export default function SearchBar({ onSearch, onSurprise, loading, history = [],
       {/* Search history chips */}
       {history.length > 0 && (
         <div className="flex flex-wrap gap-2 mt-1">
-          <span className="text-xs text-gray-500 self-center">Recent:</span>
+          <span className="text-xs text-slate-500 self-center">Recent:</span>
           {history.map((q) => (
-            <div key={q} className="flex items-center gap-1 bg-gray-800 border border-gray-700 rounded-full px-3 py-1 text-xs text-gray-300 hover:border-gray-500 transition-colors group">
+            <div key={q} className="flex items-center gap-1 bg-slate-800/50 border border-slate-700/50 rounded-full px-3 py-1 text-xs text-cyan-200 hover:border-cyan-500/50 transition-colors group">
               <button
                 type="button"
                 onClick={() => handleHistoryClick(q)}
@@ -403,7 +403,7 @@ export default function SearchBar({ onSearch, onSurprise, loading, history = [],
               <button
                 type="button"
                 onClick={() => onRemoveHistory(q)}
-                className="text-gray-600 hover:text-red-400 transition-colors ml-1 opacity-0 group-hover:opacity-100"
+                className="text-slate-600 hover:text-red-400 transition-colors ml-1 opacity-0 group-hover:opacity-100"
                 aria-label={`Remove "${q}" from history`}
               >
                 ✕

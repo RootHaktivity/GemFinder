@@ -116,7 +116,7 @@ export default function RepoCard({ repo, isBookmarked, onToggleBookmark }) {
   };
 
   return (
-    <div className="card p-6 flex flex-col h-full hover:border-blue-500 transition-colors group">
+    <div className="card p-6 flex flex-col h-full hover:border-cyan-500/50 hover:shadow-lg hover:shadow-cyan-500/20 transition-all group">
       {/* Header */}
       <div className="mb-3">
         <div className="flex items-start justify-between gap-2 mb-2">
@@ -126,7 +126,7 @@ export default function RepoCard({ repo, isBookmarked, onToggleBookmark }) {
             rel="noopener noreferrer"
             className="flex-1 min-w-0"
           >
-            <h3 className="text-lg font-bold text-blue-400 hover:text-blue-300 transition-colors truncate">
+            <h3 className="text-lg font-bold text-emerald-400 hover:text-emerald-300 transition-colors truncate">
               {repo.name}
             </h3>
           </a>
@@ -137,7 +137,7 @@ export default function RepoCard({ repo, isBookmarked, onToggleBookmark }) {
         </div>
 
         {repo.description && (
-          <p className="text-sm text-gray-300 line-clamp-2 mb-2">
+          <p className="text-sm text-cyan-100 line-clamp-2 mb-2">
             {repo.description}
           </p>
         )}
@@ -146,7 +146,7 @@ export default function RepoCard({ repo, isBookmarked, onToggleBookmark }) {
         <div className="flex flex-wrap items-center gap-2 text-xs">
           {/* Language */}
           {repo.language && (
-            <span className="flex items-center gap-1 text-gray-300">
+            <span className="flex items-center gap-1 text-slate-300">
               <span
                 className="w-2.5 h-2.5 rounded-full inline-block shrink-0"
                 style={{ backgroundColor: getLangColor(repo.language) }}
@@ -157,21 +157,21 @@ export default function RepoCard({ repo, isBookmarked, onToggleBookmark }) {
 
           {/* Forks */}
           {repo.forks > 0 && (
-            <span className="text-gray-400 flex items-center gap-1">
+            <span className="text-slate-400 flex items-center gap-1">
               🍴 {formatNumber(repo.forks)}
             </span>
           )}
 
           {/* Last pushed */}
           {repo.pushed_at && (
-            <span className="text-gray-500">
+            <span className="text-slate-500">
               🕐 {relativeDate(repo.pushed_at)}
             </span>
           )}
 
           {/* License */}
           {repo.license && repo.license !== 'NOASSERTION' && (
-            <span className="text-gray-500 border border-gray-700 rounded px-1.5 py-0.5">
+            <span className="text-slate-500 border border-slate-700/50 rounded px-1.5 py-0.5">
               {repo.license}
             </span>
           )}
@@ -192,7 +192,7 @@ export default function RepoCard({ repo, isBookmarked, onToggleBookmark }) {
               {osBadges.map((b) => (
                 <span
                   key={b.topic}
-                  className="inline-flex items-center gap-1 text-xs bg-gray-700 bg-opacity-60 text-gray-300 border border-gray-600 rounded-full px-2 py-0.5"
+                  className="inline-flex items-center gap-1 text-xs bg-slate-800/50 text-cyan-300 border border-slate-700/50 rounded-full px-2 py-0.5"
                   title={`Compatible with ${b.label}`}
                 >
                   {b.icon} {b.label}
@@ -215,11 +215,11 @@ export default function RepoCard({ repo, isBookmarked, onToggleBookmark }) {
 
       {/* AI Summary */}
       <div className="flex-1 mb-3">
-        <div className="bg-gradient-to-br from-blue-900 to-purple-900 bg-opacity-30 border border-blue-700 border-opacity-30 rounded-lg p-4">
-          <p className="text-xs text-blue-300 font-semibold mb-2 uppercase tracking-wide">
+        <div className="bg-gradient-to-br from-cyan-900/30 to-emerald-900/30 border border-cyan-700/30 rounded-lg p-4 backdrop-blur-sm">
+          <p className="text-xs text-cyan-400 font-semibold mb-2 uppercase tracking-wide">
             🤖 AI Summary
           </p>
-          <p className="text-sm text-gray-200 line-clamp-4 leading-relaxed">
+          <p className="text-sm text-cyan-100 line-clamp-4 leading-relaxed">
             {repo.ai_summary}
           </p>
         </div>
@@ -231,13 +231,13 @@ export default function RepoCard({ repo, isBookmarked, onToggleBookmark }) {
           {repo.topics.slice(0, 4).map((topic) => (
             <span
               key={topic}
-              className="text-xs bg-blue-900 bg-opacity-40 text-blue-300 border border-blue-700 border-opacity-40 rounded-full px-2 py-0.5"
+              className="text-xs bg-emerald-900/40 text-emerald-300 border border-emerald-700/40 rounded-full px-2 py-0.5"
             >
               #{topic}
             </span>
           ))}
           {repo.topics.length > 4 && (
-            <span className="text-xs text-gray-500">+{repo.topics.length - 4} more</span>
+            <span className="text-xs text-slate-500">+{repo.topics.length - 4} more</span>
           )}
         </div>
       )}
@@ -260,8 +260,8 @@ export default function RepoCard({ repo, isBookmarked, onToggleBookmark }) {
           title={copied ? 'Copied!' : `Copy: ${cloneUrl}`}
           className={`px-3 py-2 rounded-lg border text-sm transition-all ${
             copied
-              ? 'border-green-500 text-green-400 bg-green-500 bg-opacity-10'
-              : 'border-gray-600 text-gray-400 hover:border-gray-400 hover:text-white'
+              ? 'border-emerald-500 text-emerald-400 bg-emerald-500/20'
+              : 'border-slate-700/50 text-slate-400 hover:border-cyan-500/50 hover:text-cyan-400'
           }`}
         >
           {copied ? '✓' : '📋'}
@@ -274,8 +274,8 @@ export default function RepoCard({ repo, isBookmarked, onToggleBookmark }) {
           title={isBookmarked ? 'Remove bookmark' : 'Bookmark this repo'}
           className={`px-3 py-2 rounded-lg border text-sm transition-all ${
             isBookmarked
-              ? 'border-pink-500 text-pink-400 bg-pink-500 bg-opacity-10'
-              : 'border-gray-600 text-gray-400 hover:border-pink-500 hover:text-pink-400'
+              ? 'border-emerald-500 text-emerald-400 bg-emerald-500/20'
+              : 'border-slate-700/50 text-slate-400 hover:border-emerald-500/50 hover:text-emerald-400'
           }`}
         >
           {isBookmarked ? '❤️' : '🤍'}
