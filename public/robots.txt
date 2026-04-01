@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+
+# Sitemaps
+Sitemap: https://github-search-git-main-sadisticpentester-5972s-projects.vercel.app/sitemap.xml
+
+# Crawl delay
+Crawl-delay: 1
