@@ -408,13 +408,13 @@ export default async function handler(req, res) {
       total_count = githubData.total_count || 0;
     }
 
-    // Determine result count and whether to rerank
-    const shouldRerank = req.query?.rerank === 'true';
-    const resultCount = shouldRerank ? 15 : 3;
+    // Determine whether to apply ranking and get appropriate batch size
+    const shouldRank = req.query?.rank === 'true';
+    const batchSize = 3; // Always return 3 per page (pagination)
 
-    // Apply reranking if requested
-    let processRepos = repos.slice(0, resultCount);
-    if (shouldRerank && q) {
+    // Apply ranking if requested
+    let processRepos = repos.slice(0, batchSize);
+    if (shouldRank && q) {
       processRepos = rerankRepositories(processRepos, q);
     }
 

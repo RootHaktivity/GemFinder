@@ -14,10 +14,9 @@ function App() {
   const [totalCount, setTotalCount]     = useState(0);
   const [loading, setLoading]           = useState(false);
   const [loadingMore, setLoadingMore]   = useState(false);
-  const [loadingRerank, setLoadingRerank] = useState(false);
   const [error, setError]               = useState(null);
   const [searched, setSearched]         = useState(false);
-  const [hasReranked, setHasReranked]   = useState(false);
+  const [rankingEnabled, setRankingEnabled] = useState(false);
   const [currentQuery, setCurrentQuery] = useState('');
   const [currentFilters, setCurrentFilters] = useState({});
   const [page, setPage]                 = useState(1);
@@ -73,7 +72,7 @@ function App() {
       window.history.pushState({}, '', url);
 
       try {
-        const data = await searchRepos(query, filters, pageNum);
+        const data = await searchRepos(query, filters, pageNum, rankingEnabled);
         const newResults = data.results || [];
 
         if (isFirstPage) {
@@ -106,23 +105,6 @@ function App() {
     handleSearch(currentQuery, currentFilters, page + 1, false);
   };
 
-  const handleLoadReranked = async () => {
-    if (!currentQuery?.trim()) return;
-    setLoadingRerank(true);
-    setError(null);
-
-    try {
-      const data = await searchRepos(currentQuery, currentFilters, 1, true);
-      setResults(data.results || []);
-      setTotalCount(data.total_count || 0);
-      setHasReranked(true);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoadingRerank(false);
-    }
-  };
-
   const hasMore = results.length < Math.min(totalCount, 90); // GitHub caps at 1000, we cap display at 90
 
   // ── Render ───────────────────────────────────────────────────────────────
@@ -143,7 +125,7 @@ function App() {
       {/* Header */}
       <header className="header text-center mb-8">
         <h1 className="brand-name">GemFinder</h1>
-        <p className="tagline">AI-Powered GitHub Discovery</p>
+        <p className="tagline">Relevance-Ranked Repository Search with AI-Powered Summaries</p>
       </header>
 
       {/* Tab Navigation */}
@@ -174,6 +156,8 @@ function App() {
                 loading={loading}
                 history={history}
                 onRemoveHistory={removeFromHistory}
+                rankingEnabled={rankingEnabled}
+                onRankingToggle={setRankingEnabled}
               />
             </div>
           </div>
@@ -222,7 +206,7 @@ function App() {
             <>
               <div style={{ textAlign: 'center', marginBottom: '2rem', color: 'rgba(255,255,255,0.7)', fontSize: '0.95rem' }}>
                 Found <strong style={{ color: 'var(--primary)' }}>{results.length}</strong> of <strong>{totalCount.toLocaleString()}</strong> repos for "<strong style={{ color: 'var(--secondary)' }}>{currentQuery}</strong>"
-                {hasReranked && <span style={{ marginLeft: '1rem', color: 'var(--secondary)' }}>🤖 AI-Ranked</span>}
+                {rankingEnabled && <span style={{ marginLeft: '1rem', color: 'var(--secondary)' }}>📊 Ranked</span>}
               </div>
               <div className="results-grid">
                 {results.map((repo, idx) => (
@@ -235,19 +219,9 @@ function App() {
                 ))}
               </div>
 
-              {/* Load More / Load Reranked */}
+              {/* Load More */}
               <div style={{ textAlign: 'center', marginTop: '2rem', display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-                {!hasReranked && results.length >= 3 && (
-                  <button
-                    onClick={handleLoadReranked}
-                    disabled={loadingRerank}
-                    className="btn-primary"
-                    style={{ opacity: loadingRerank ? 0.6 : 1 }}
-                  >
-                    {loadingRerank ? '⏳ Ranking...' : '🤖 Load 15 Results (AI-Ranked)'}
-                  </button>
-                )}
-                {hasMore && !hasReranked && (
+                {hasMore && (
                   <button
                     onClick={handleLoadMore}
                     disabled={loadingMore}

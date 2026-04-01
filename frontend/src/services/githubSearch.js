@@ -4,8 +4,8 @@ const API_BASE = import.meta.env.PROD
 
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 
-function getCacheKey(query, filters, page) {
-  return `hgs_cache_${query}_${JSON.stringify(filters)}_p${page}`;
+function getCacheKey(query, filters, page, rank) {
+  return `hgs_cache_${query}_${JSON.stringify(filters)}_p${page}_rank${rank}`;
 }
 
 function readCache(key) {
@@ -36,13 +36,13 @@ function writeCache(key, data) {
  * @param {string} query
  * @param {{ lang?: string, min_stars?: number, sort?: string, active_only?: boolean }} filters
  * @param {number} page
- * @param {boolean} rerank - If true, return 15 results ranked by AI relevance
+ * @param {boolean} rank - If true, sort results by relevance to query
  * @returns {Promise<{ results: Array, total_count: number }>}
  */
-export async function searchRepos(query, filters = {}, page = 1, rerank = false) {
-  const cacheKey = getCacheKey(query, filters, page);
+export async function searchRepos(query, filters = {}, page = 1, rank = false) {
+  const cacheKey = getCacheKey(query, filters, page, rank);
   const cached = readCache(cacheKey);
-  if (cached && !rerank) return cached;
+  if (cached) return cached;
 
   const params = new URLSearchParams({ q: query, page });
   if (filters.lang) params.set('lang', filters.lang);
@@ -52,7 +52,7 @@ export async function searchRepos(query, filters = {}, page = 1, rerank = false)
   if (filters.active_only) params.set('active_only', 'true');
   if (filters.os) params.set('os', filters.os);
   if (filters.category) params.set('category', filters.category);
-  if (rerank) params.set('rerank', 'true');
+  if (rank) params.set('rank', 'true');
 
   const url = `${API_BASE}/search?${params.toString()}`;
   const response = await fetch(url);
