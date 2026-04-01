@@ -116,40 +116,46 @@ export default function RepoCard({ repo, isBookmarked, onToggleBookmark }) {
   };
 
   return (
-    <div className="card p-6 flex flex-col h-full hover:border-cyan-500/50 hover:shadow-lg hover:shadow-cyan-500/20 transition-all group">
+    <div className="repo-card">
       {/* Header */}
-      <div className="mb-3">
-        <div className="flex items-start justify-between gap-2 mb-2">
+      <div style={{ marginBottom: '1rem' }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.5rem' }}>
           <a
             href={repo.html_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex-1 min-w-0"
+            style={{ flex: 1, minWidth: 0 }}
           >
-            <h3 className="text-lg font-bold text-emerald-400 hover:text-emerald-300 transition-colors truncate">
+            <h3 className="repo-name">
               {repo.name}
             </h3>
           </a>
-          <div className="flex items-center gap-1 whitespace-nowrap text-yellow-400 shrink-0">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', whiteSpace: 'nowrap', color: '#fbbf24', flexShrink: 0 }}>
             <span>⭐</span>
-            <span className="font-semibold text-sm">{formatStars(repo.stars)}</span>
+            <span style={{ fontWeight: '600', fontSize: '0.875rem' }}>{formatStars(repo.stars)}</span>
           </div>
         </div>
 
         {repo.description && (
-          <p className="text-sm text-cyan-100 line-clamp-2 mb-2">
+          <p className="repo-description">
             {repo.description}
           </p>
         )}
 
         {/* Meta badges row */}
-        <div className="flex flex-wrap items-center gap-2 text-xs">
+        <div className="repo-meta">
           {/* Language */}
           {repo.language && (
-            <span className="flex items-center gap-1 text-slate-300">
+            <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: 'rgba(255, 255, 255, 0.7)' }}>
               <span
-                className="w-2.5 h-2.5 rounded-full inline-block shrink-0"
-                style={{ backgroundColor: getLangColor(repo.language) }}
+                style={{
+                  width: '10px',
+                  height: '10px',
+                  borderRadius: '50%',
+                  display: 'inline-block',
+                  flexShrink: 0,
+                  backgroundColor: getLangColor(repo.language)
+                }}
               />
               {repo.language}
             </span>
@@ -157,28 +163,28 @@ export default function RepoCard({ repo, isBookmarked, onToggleBookmark }) {
 
           {/* Forks */}
           {repo.forks > 0 && (
-            <span className="text-slate-400 flex items-center gap-1">
+            <span style={{ color: 'rgba(255, 255, 255, 0.6)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
               🍴 {formatNumber(repo.forks)}
             </span>
           )}
 
           {/* Last pushed */}
           {repo.pushed_at && (
-            <span className="text-slate-500">
+            <span style={{ color: 'rgba(255, 255, 255, 0.5)' }}>
               🕐 {relativeDate(repo.pushed_at)}
             </span>
           )}
 
           {/* License */}
           {repo.license && repo.license !== 'NOASSERTION' && (
-            <span className="text-slate-500 border border-slate-700/50 rounded px-1.5 py-0.5">
+            <span style={{ fontSize: '0.85rem', color: 'rgba(255, 255, 255, 0.5)', border: '1px solid rgba(100, 120, 150, 0.3)', borderRadius: '4px', padding: '0.1rem 0.4rem' }}>
               {repo.license}
             </span>
           )}
 
           {/* Trending badge */}
           {trending && (
-            <span className="text-orange-400 font-semibold animate-pulse">
+            <span style={{ color: '#fb923c', fontWeight: '600', animation: 'pulse 2s infinite' }}>
               🔥 Trending
             </span>
           )}
@@ -188,12 +194,13 @@ export default function RepoCard({ repo, isBookmarked, onToggleBookmark }) {
         {(() => {
           const osBadges = detectOS(repo.topics);
           return osBadges.length > 0 ? (
-            <div className="flex flex-wrap gap-1.5 mt-2">
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.5rem' }}>
               {osBadges.map((b) => (
                 <span
                   key={b.topic}
-                  className="inline-flex items-center gap-1 text-xs bg-slate-800/50 text-cyan-300 border border-slate-700/50 rounded-full px-2 py-0.5"
+                  className="meta-badge"
                   title={`Compatible with ${b.label}`}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.75rem', background: 'rgba(0, 240, 255, 0.08)', color: 'rgba(0, 240, 255, 0.8)', border: '1px solid rgba(0, 240, 255, 0.3)', borderRadius: '20px', padding: '0.25rem 0.5rem' }}
                 >
                   {b.icon} {b.label}
                 </span>

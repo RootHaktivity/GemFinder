@@ -132,54 +132,100 @@ export default function SearchBar({ onSearch, onSurprise, loading, history = [],
     filters.category !== '';
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <div style={{ maxWidth: '900px', margin: '0 auto', width: '100%' }}>
       {/* Main search row */}
       <form onSubmit={handleSubmit}>
-        <div className="flex gap-3 mb-3">
-          <div className="flex-1 relative">
+        <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
+          <div style={{ flex: 1, minWidth: '200px', position: 'relative' }}>
             <input
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search GitHub repos… (e.g. 'rust cli', 'self-hosted dashboard')"
-              className="w-full px-6 py-4 bg-slate-900 border border-slate-700/50 rounded-lg text-cyan-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/50 transition-all font-mono"
+              placeholder="Search GitHub repos… (e.g. 'rust cli')"
+              style={{
+                width: '100%',
+                padding: '0.75rem 1rem',
+                background: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid rgba(0, 240, 255, 0.3)',
+                borderRadius: '12px',
+                color: '#ffffff',
+                fontSize: '1rem',
+                fontFamily: 'Outfit, sans-serif',
+                transition: 'all 0.3s ease',
+                disabled: loading ? 0.5 : 1
+              }}
+              onFocus={(e) => {
+                e.target.style.background = 'rgba(255, 255, 255, 0.08)';
+                e.target.style.borderColor = 'var(--primary)';
+                e.target.style.boxShadow = '0 0 20px rgba(0, 240, 255, 0.2)';
+              }}
+              onBlur={(e) => {
+                e.target.style.background = 'rgba(255, 255, 255, 0.05)';
+                e.target.style.borderColor = 'rgba(0, 240, 255, 0.3)';
+                e.target.style.boxShadow = 'none';
+              }}
               disabled={loading}
             />
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="btn-primary px-8 py-4 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap shadow-lg shadow-cyan-500/30"
+            className="btn-primary"
+            style={{
+              minWidth: '120px',
+              opacity: loading ? 0.6 : 1,
+              cursor: loading ? 'not-allowed' : 'pointer'
+            }}
           >
             {loading ? '🔄' : '🔍'} Search
           </button>
         </div>
 
         {/* Action row */}
-        <div className="flex items-center justify-between mb-4">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
           <button
             type="button"
             onClick={() => setShowAdvanced((v) => !v)}
-            className={`flex items-center gap-2 text-sm px-3 py-1.5 rounded-lg border transition-colors ${
-              showAdvanced || hasActiveFilters
-                ? 'border-cyan-500/70 text-cyan-400 bg-cyan-500/10'
-                : 'border-slate-600/50 text-slate-400 hover:border-slate-500/70 hover:text-cyan-100'
-            }`}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              fontSize: '0.9rem',
+              padding: '0.5rem 0.75rem',
+              borderRadius: '8px',
+              border: showAdvanced || hasActiveFilters ? '1px solid rgba(0, 240, 255, 0.7)' : '1px solid rgba(100, 120, 150, 0.5)',
+              background: showAdvanced || hasActiveFilters ? 'rgba(0, 240, 255, 0.1)' : 'transparent',
+              color: showAdvanced || hasActiveFilters ? 'var(--primary)' : 'rgba(255, 255, 255, 0.6)',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease'
+            }}
           >
-            <span>⚙️ Advanced Filters</span>
+            <span>⚙️ Advanced</span>
             {hasActiveFilters && (
-              <span className="bg-cyan-500/80 text-slate-900 text-xs rounded-full px-1.5 py-0.5 leading-none font-bold">
+              <span style={{
+                background: 'rgba(0, 240, 255, 0.8)',
+                color: 'var(--dark-1)',
+                fontSize: '0.75rem',
+                borderRadius: '50%',
+                padding: '0 0.4rem',
+                fontWeight: 'bold'
+              }}>
                 ON
               </span>
             )}
-            <span className="text-xs">{showAdvanced ? '▲' : '▼'}</span>
           </button>
 
           <button
             type="button"
             onClick={() => onSurprise(filters)}
             disabled={loading}
-            className="btn-secondary px-5 py-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn-secondary"
+            style={{
+              padding: '0.5rem 1rem',
+              fontSize: '0.9rem',
+              opacity: loading ? 0.5 : 1,
+              cursor: loading ? 'not-allowed' : 'pointer'
+            }}
           >
             ✨ Surprise Me!
           </button>
