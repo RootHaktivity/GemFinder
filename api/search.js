@@ -83,15 +83,20 @@ async function fetchReadmeContent(owner, repo) {
 
 function stripMarkdown(text) {
   return text
-    .replace(/!\[.*?\]\(.*?\)/g, '')      // remove images
-    .replace(/\[([^\]]+)\]\(.*?\)/g, '$1') // links → text
-    .replace(/#{1,6}\s+/g, '')             // headings
-    .replace(/`{1,3}[^`]*`{1,3}/g, '')    // inline/block code
-    .replace(/>\s+/g, '')                  // blockquotes
-    .replace(/[-*_]{3,}/g, '')             // horizontal rules
-    .replace(/[*_~]{1,2}([^*_~]+)[*_~]{1,2}/g, '$1') // bold/italic
-    .replace(/<[^>]+>/g, '')               // HTML tags
-    .replace(/\n{3,}/g, '\n\n')            // excess newlines
+    .replace(/!\[[\s\S]*?\]\(.*?\)/g, '')          // remove images
+    .replace(/\[!\[[\s\S]*?\]\(.*?\)\]\(.*?\)/g, '') // badge links
+    .replace(/\[([^\]]*)\]\(.*?\)/g, '$1')          // links → text (incl. empty [])
+    .replace(/#{1,6}\s*/g, '')                       // headings
+    .replace(/`{3}[\s\S]*?`{3}/g, '')               // fenced code blocks
+    .replace(/`[^`\n]*`/g, '')                       // inline code
+    .replace(/^>\s*/gm, '')                          // blockquotes
+    .replace(/[-*_]{3,}/g, '')                       // horizontal rules
+    .replace(/[*_~]{1,2}([^*_~\n]+)[*_~]{1,2}/g, '$1') // bold/italic
+    .replace(/<[^>]*>/g, '')                         // complete HTML tags
+    .replace(/<[^\s<>]*/g, '')                       // partial/malformed HTML (no closing >)
+    .replace(/https?:\/\/\S+/g, '')                  // bare URLs
+    .replace(/\n{3,}/g, '\n\n')                      // excess newlines
+    .replace(/[ \t]{2,}/g, ' ')                      // excess spaces/tabs
     .trim();
 }
 
@@ -210,9 +215,18 @@ export default async function handler(req, res) {
     const enriched = await Promise.all(
       repos.slice(0, 5).map(async (repo) => {
         const readme = await fetchReadmeContent(repo.owner.login, repo.name);
-        const ai_summary = readme
-          ? await summarizeWithHF(readme)
-          : 'README not found';
+        const cleanedReadme = readme ? stripMarkdown(readme) : '';
+
+        let ai_summary;
+        if (cleanedReadme.length >= 50) {
+          // Enough clean text — send to HF for summarization
+          ai_summary = await summarizeWithHF(readme);
+        } else if (repo.description) {
+          // README is missing or mostly images/HTML — fall back to description
+          ai_summary = repo.description;
+        } else {
+          ai_summary = 'No summary available (README is missing or image-only).';
+        }
 
         return {
           name: repo.name,
