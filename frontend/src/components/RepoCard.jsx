@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 // OS → badge mapping (detected from topics)
 const OS_BADGES = [
@@ -91,6 +91,32 @@ function isTrending(pushedAt) {
 
 export default function RepoCard({ repo, isBookmarked, onToggleBookmark }) {
   const [copied, setCopied] = useState(false);
+  const [summary, setSummary] = useState(repo.ai_summary || null);
+  const [loadingSummary, setLoadingSummary] = useState(!repo.ai_summary);
+
+  // Lazy-load summary if not already provided
+  useEffect(() => {
+    if (repo.ai_summary) {
+      setSummary(repo.ai_summary);
+      setLoadingSummary(false);
+      return;
+    }
+
+    const fetchSummary = async () => {
+      try {
+        const { fetchSummary: getSummary } = await import('../services/githubSearch.js');
+        const result = await getSummary(repo.full_name.split('/')[0], repo.name);
+        setSummary(result);
+      } catch (error) {
+        console.error(`Failed to load summary for ${repo.name}:`, error);
+        setSummary(repo.description || 'No summary available.');
+      } finally {
+        setLoadingSummary(false);
+      }
+    };
+
+    fetchSummary();
+  }, [repo]);
 
   const gemScore = calcGemScore(repo.stars, repo.created_at);
   const gem = gemLabel(gemScore);
@@ -226,9 +252,15 @@ export default function RepoCard({ repo, isBookmarked, onToggleBookmark }) {
           <p className="text-xs text-cyan-400 font-semibold mb-2 uppercase tracking-wide">
             🤖 AI Summary
           </p>
-          <p className="text-sm text-cyan-100 line-clamp-4 leading-relaxed">
-            {repo.ai_summary}
-          </p>
+          {loadingSummary ? (
+            <div className="text-sm text-cyan-300 animate-pulse">
+              ⏳ Loading summary...
+            </div>
+          ) : (
+            <p className="text-sm text-cyan-100 line-clamp-4 leading-relaxed">
+              {summary || 'No summary available.'}
+            </p>
+          )}
         </div>
       </div>
 

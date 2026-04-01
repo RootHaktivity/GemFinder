@@ -1,5 +1,9 @@
 const GITHUB_API_BASE = 'https://api.github.com';
 
+// In-memory cache for summaries (persists between requests)
+const summaryCache = {};
+const CACHE_EXPIRY = 24 * 60 * 60 * 1000; // 24 hours
+
 function buildGitHubHeaders() {
   const headers = {
     Accept: 'application/vnd.github+json',
@@ -271,6 +275,30 @@ function setCORSHeaders(res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 }
 
+// Get summary with caching
+async function getCachedSummary(owner, repo, readme, description) {
+  const cacheKey = `${owner}/${repo}`;
+  const cached = summaryCache[cacheKey];
+
+  // Return cached summary if still valid
+  if (cached && Date.now() - cached.timestamp < CACHE_EXPIRY) {
+    console.log(`[CACHE] Hit for ${cacheKey}`);
+    return cached.summary;
+  }
+
+  // Fetch and cache new summary
+  console.log(`[CACHE] Miss for ${cacheKey}, fetching...`);
+  const meaningfulText = readme ? extractMeaningfulText(readme) : '';
+  const summary = await summarizeWithHF(meaningfulText, description, readme);
+
+  summaryCache[cacheKey] = {
+    summary,
+    timestamp: Date.now(),
+  };
+
+  return summary;
+}
+
 export default async function handler(req, res) {
   setCORSHeaders(res);
 
@@ -323,14 +351,10 @@ export default async function handler(req, res) {
       total_count = githubData.total_count || 0;
     }
 
-    // Enrich each repo with README and AI summary
+    // Enrich each repo with README (but skip AI summary for speed)
     const enriched = await Promise.all(
-      repos.slice(0, 9).map(async (repo) => {
+      repos.slice(0, 3).map(async (repo) => {
         const readme = await fetchReadmeContent(repo.owner.login, repo.name);
-        // Extract meaningful prose (skips ASCII art, badges, version strings)
-        const meaningfulText = readme ? extractMeaningfulText(readme) : '';
-
-        const ai_summary = await summarizeWithHF(meaningfulText, repo.description, readme);
 
         return {
           name: repo.name,
@@ -345,7 +369,7 @@ export default async function handler(req, res) {
           license: repo.license?.spdx_id || null,
           pushed_at: repo.pushed_at,
           created_at: repo.created_at,
-          ai_summary,
+          ai_summary: null, // Will be fetched client-side via separate endpoint
         };
       })
     );

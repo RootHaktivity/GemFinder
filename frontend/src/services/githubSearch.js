@@ -88,6 +88,24 @@ export async function getRepoSummary(owner, repo) {
   return response.json();
 }
 
+/**
+ * Fetch AI summary for a repo (separate lazy-loading endpoint with caching).
+ * @param {string} owner
+ * @param {string} repo
+ * @returns {Promise<string>} AI-generated summary
+ */
+export async function fetchSummary(owner, repo) {
+  const url = `${API_BASE}/summarize?repo=${encodeURIComponent(`${owner}/${repo}`)}`;
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch summary: ${response.status}`);
+  }
+
+  const data = await response.json();
+  return data.ai_summary || null;
+}
+
 const surpriseQueries = [
   'rust-cli',
   'pentesting',
