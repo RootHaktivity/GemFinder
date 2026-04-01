@@ -265,30 +265,17 @@ export default function SearchBar({ onSearch, onSurprise, loading, history = [],
               <span>🏠 Reset</span>
             </button>
 
-            {/* Smart Ranking Toggle */}
-            <label
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                fontSize: '0.9rem',
-                padding: '0.5rem 0.75rem',
-                borderRadius: '8px',
-                border: rankingEnabled ? '1px solid rgba(0, 240, 255, 0.7)' : '1px solid rgba(100, 120, 150, 0.5)',
-                background: rankingEnabled ? 'rgba(0, 240, 255, 0.1)' : 'transparent',
-                color: rankingEnabled ? 'var(--primary)' : 'rgba(255, 255, 255, 0.6)',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                whiteSpace: 'nowrap'
-              }}
-            >
-              <input
-                type="checkbox"
-                checked={rankingEnabled}
-                onChange={(e) => onRankingToggle(e.target.checked)}
-                style={{ cursor: 'pointer', width: '16px', height: '16px' }}
-              />
+            {/* Smart Ranking Toggle Switch */}
+            <label className={`ranking-switch-container ${rankingEnabled ? 'enabled' : ''}`}>
               <span>📊 Smart Ranking</span>
+              <div className="ranking-switch">
+                <input
+                  type="checkbox"
+                  checked={rankingEnabled}
+                  onChange={(e) => onRankingToggle(e.target.checked)}
+                />
+                <span className="ranking-switch-slider"></span>
+              </div>
             </label>
           </div>
         </div>

@@ -206,7 +206,23 @@ function App() {
             <>
               <div style={{ textAlign: 'center', marginBottom: '2rem', color: 'rgba(255,255,255,0.7)', fontSize: '0.95rem' }}>
                 Found <strong style={{ color: 'var(--primary)' }}>{results.length}</strong> of <strong>{totalCount.toLocaleString()}</strong> repos for "<strong style={{ color: 'var(--secondary)' }}>{currentQuery}</strong>"
-                {rankingEnabled && <span style={{ marginLeft: '1rem', color: 'var(--secondary)' }}>📊 Ranked</span>}
+                {rankingEnabled && (
+                  <span style={{ 
+                    marginLeft: '1rem', 
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    color: 'var(--secondary)', 
+                    backgroundColor: 'rgba(255, 0, 212, 0.15)',
+                    border: '1px solid rgba(255, 0, 212, 0.4)',
+                    borderRadius: '20px',
+                    padding: '0.25rem 0.75rem',
+                    fontSize: '0.9rem',
+                    fontWeight: '600'
+                  }}>
+                    📊 Ranked Results
+                  </span>
+                )}
               </div>
               <div className="results-grid">
                 {results.map((repo, idx) => (
