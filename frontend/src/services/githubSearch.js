@@ -1,5 +1,5 @@
 const API_BASE = import.meta.env.PROD
-  ? 'https://github-search-theta-nine.vercel.app'
+  ? 'https://github-search-git-main-sadisticpentester-5972s-projects.vercel.app'
   : '/api';
 
 export async function searchRepos(query) {
