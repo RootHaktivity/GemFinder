@@ -154,7 +154,7 @@ function setCORSHeaders(res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 }
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   setCORSHeaders(res);
 
   if (req.method === 'OPTIONS') {
