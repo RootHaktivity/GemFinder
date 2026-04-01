@@ -96,8 +96,9 @@ async function fetchReadmeContent(owner, repo) {
 
   try {
     const normalized = data.content.replace(/\n/g, '');
+    // Fetch more raw content so we can find prose past the badge/art header
     const decoded = Buffer.from(normalized, 'base64').toString('utf-8');
-    return decoded.slice(0, 1000);
+    return decoded.slice(0, 4000); // grab more so extractMeaningfulText can find prose
   } catch {
     return '';
   }
@@ -105,37 +106,84 @@ async function fetchReadmeContent(owner, repo) {
 
 function stripMarkdown(text) {
   return text
-    .replace(/!\[[\s\S]*?\]\(.*?\)/g, '')          // remove images
+    .replace(/!\[[\s\S]*?\]\(.*?\)/g, '')            // remove images
     .replace(/\[!\[[\s\S]*?\]\(.*?\)\]\(.*?\)/g, '') // badge links
-    .replace(/\[([^\]]*)\]\(.*?\)/g, '$1')          // links → text (incl. empty [])
-    .replace(/#{1,6}\s*/g, '')                       // ATX headings (#, ##, etc.)
-    .replace(/^[=\-]{3,}\s*$/gm, '')                 // setext heading underlines (=== or ---)
-    .replace(/`{3}[\s\S]*?`{3}/g, '')               // fenced code blocks
-    .replace(/`[^`\n]*`/g, '')                       // inline code
-    .replace(/^>\s*/gm, '')                          // blockquotes
-    .replace(/[-*_]{3,}/g, '')                       // horizontal rules
+    .replace(/\[([^\]]*)\]\(.*?\)/g, '$1')            // links → text
+    .replace(/#{1,6}\s*/g, '')                         // ATX headings
+    .replace(/^[=\-]{3,}\s*$/gm, '')                   // setext heading underlines
+    .replace(/`{3}[\s\S]*?`{3}/g, '')                 // fenced code blocks
+    .replace(/`[^`\n]*`/g, '')                         // inline code
+    .replace(/^>\s*/gm, '')                            // blockquotes
+    .replace(/[-*_]{3,}/g, '')                         // horizontal rules
     .replace(/[*_~]{1,2}([^*_~\n]+)[*_~]{1,2}/g, '$1') // bold/italic
-    .replace(/<[^>]*>/g, '')                         // complete HTML tags
-    .replace(/<[^\s<>]*/g, '')                       // partial/malformed HTML (no closing >)
-    .replace(/\s*\w+="[^"]*"?/g, '')                 // orphaned HTML attributes (double quotes, possibly unclosed)
-    .replace(/\s*\w+='[^']*'?/g, '')                 // orphaned HTML attributes (single quotes, possibly unclosed)
-    .replace(/https?:\/\/\S+/g, '')                  // bare URLs
-    .replace(/\n[ \t]*\n[ \t]*\n/g, '\n\n')          // lines with only whitespace between newlines
-    .replace(/\n{3,}/g, '\n\n')                      // excess newlines
-    .replace(/[ \t]{2,}/g, ' ')                      // excess spaces/tabs
+    .replace(/<[^>]*>/g, '')                           // complete HTML tags
+    .replace(/<[^\s<>]*/g, '')                         // partial/malformed HTML
+    .replace(/\s*\w+="[^"]*"?/g, '')                   // orphaned HTML attrs (double quotes)
+    .replace(/\s*\w+='[^']*'?/g, '')                   // orphaned HTML attrs (single quotes)
+    .replace(/https?:\/\/\S+/g, '')                    // bare URLs
+    .replace(/\n[ \t]*\n[ \t]*\n/g, '\n\n')            // whitespace-only blank lines
+    .replace(/\n{3,}/g, '\n\n')                        // excess newlines
+    .replace(/[ \t]{2,}/g, ' ')                        // excess spaces/tabs
     .trim();
 }
 
-async function summarizeWithHF(text) {
-  if (!process.env.HF_TOKEN) {
-    return 'No AI summary available (missing HF_TOKEN).';
+/**
+ * Extract the first meaningful prose paragraph(s) from a README.
+ * Skips lines that are ASCII art, badge-only, version strings, or mostly symbols.
+ */
+function extractMeaningfulText(rawReadme, maxChars = 900) {
+  const stripped = stripMarkdown(rawReadme);
+  const lines = stripped.split('\n');
+  const goodLines = [];
+  let totalLen = 0;
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+
+    // Skip very short lines (single words, labels, headings)
+    if (trimmed.length < 15) continue;
+
+    // Skip lines with low alphanumeric ratio — ASCII art, separators, symbol-heavy lines
+    const alphanumCount = (trimmed.match(/[a-zA-Z0-9]/g) || []).length;
+    const ratio = alphanumCount / trimmed.length;
+    if (ratio < 0.45) continue;
+
+    // Skip lines that look like version strings or changelogs
+    if (/^v?\d+\.\d+/.test(trimmed)) continue;
+
+    // Skip lines that are mostly pipe/slash characters (table rows, ASCII art)
+    const pipeSlashCount = (trimmed.match(/[|/\\]/g) || []).length;
+    if (pipeSlashCount / trimmed.length > 0.2) continue;
+
+    goodLines.push(trimmed);
+    totalLen += trimmed.length;
+    if (totalLen >= maxChars) break;
   }
 
-  const cleaned = stripMarkdown(text);
+  return goodLines.join(' ').slice(0, maxChars).trim();
+}
 
-  if (!cleaned || cleaned.length < 50) {
-    return 'README is too short for a meaningful AI summary.';
-  }
+/** Returns true if a string is a meaningful human-readable summary */
+function isMeaningfulSummary(s) {
+  if (!s || s.length < 25) return false;
+  // Reject if mostly dots, ellipsis, or symbols
+  if (/^[.\s…]+$/.test(s)) return false;
+  // Reject if alphanumeric ratio is too low (garbage output)
+  const alphanumRatio = (s.match(/[a-zA-Z0-9]/g) || []).length / s.length;
+  return alphanumRatio > 0.5;
+}
+
+async function summarizeWithHF(meaningfulText, description) {
+  // Fallback chain: description → excerpt
+  const excerptFallback = meaningfulText.split('. ').slice(0, 2).join('. ').slice(0, 180).trim();
+  const fallback = (description && description.length > 20)
+    ? description
+    : (excerptFallback || 'No summary available.');
+
+  if (!process.env.HF_TOKEN) return fallback;
+
+  if (!meaningfulText || meaningfulText.length < 50) return fallback;
 
   try {
     const res = await fetch(
@@ -144,27 +192,18 @@ async function summarizeWithHF(text) {
         headers: { Authorization: `Bearer ${process.env.HF_TOKEN}` },
         method: 'POST',
         body: JSON.stringify({
-          inputs: cleaned.slice(0, 800),
-          parameters: {
-            max_length: 100,
-            min_length: 30,
-          },
+          inputs: meaningfulText.slice(0, 900),
+          parameters: { max_length: 100, min_length: 30 },
         }),
       }
     );
 
     if (res.status === 503) {
-      // Model is loading
-      return 'AI model initializing (will be ready in 1-2 minutes on first use)...';
+      // Model loading — return fallback rather than a confusing message
+      return fallback;
     }
 
-    if (!res.ok) {
-      // Fallback: use cleaned README excerpt (no raw markdown/HTML)
-      return (
-        cleaned.split('. ').slice(0, 2).join('. ').slice(0, 150).trim() ||
-        'README summary unavailable.'
-      );
-    }
+    if (!res.ok) return fallback;
 
     const data = await res.json();
 
@@ -176,18 +215,13 @@ async function summarizeWithHF(text) {
     }
 
     if (summary) {
-      // Strip any residual markdown/HTML the model may have echoed back
       const finalSummary = stripMarkdown(summary).trim();
-      if (finalSummary.length > 20) return finalSummary;
+      if (isMeaningfulSummary(finalSummary)) return finalSummary;
     }
 
-    // Fallback: first 2 sentences of cleaned README
-    return cleaned.split('. ').slice(0, 2).join('. ').slice(0, 150).trim() ||
-      'README summary unavailable.';
-  } catch (error) {
-    // Network error - return cleaned README excerpt as fallback
-    return cleaned.split('. ').slice(0, 2).join('. ').slice(0, 150).trim() ||
-      'README summary unavailable.';
+    return fallback;
+  } catch {
+    return fallback;
   }
 }
 
@@ -252,16 +286,10 @@ export default async function handler(req, res) {
     const enriched = await Promise.all(
       repos.slice(0, 9).map(async (repo) => {
         const readme = await fetchReadmeContent(repo.owner.login, repo.name);
-        const cleanedReadme = readme ? stripMarkdown(readme) : '';
+        // Extract meaningful prose (skips ASCII art, badges, version strings)
+        const meaningfulText = readme ? extractMeaningfulText(readme) : '';
 
-        let ai_summary;
-        if (cleanedReadme.length >= 50) {
-          ai_summary = await summarizeWithHF(readme);
-        } else if (repo.description) {
-          ai_summary = repo.description;
-        } else {
-          ai_summary = 'No summary available (README is missing or image-only).';
-        }
+        const ai_summary = await summarizeWithHF(meaningfulText, repo.description);
 
         return {
           name: repo.name,
