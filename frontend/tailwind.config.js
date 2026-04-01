@@ -4,8 +4,13 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+darkMode: 'class',
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        'mono': ['"JetBrains Mono"', '"Fira Code"', '"Cascadia Code"', 'monospace'],
+      },
+    },
   },
   plugins: [],
 }
