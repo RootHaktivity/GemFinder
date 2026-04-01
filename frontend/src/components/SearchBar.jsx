@@ -236,6 +236,32 @@ export default function SearchBar({ onSearch, onSurprise, loading, history = [],
               )}
             </button>
           </div>
+
+          {/* Clear Search button */}
+          <div className="clear-button-row" style={{ marginBottom: 0 }}>
+            <button
+              type="button"
+              onClick={() => {
+                setQuery('');
+                setFilters(DEFAULT_FILTERS);
+              }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                fontSize: '0.9rem',
+                padding: '0.5rem 0.75rem',
+                borderRadius: '8px',
+                border: '1px solid rgba(255, 100, 100, 0.5)',
+                background: 'transparent',
+                color: 'rgba(255, 150, 150, 0.8)',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease'
+              }}
+            >
+              <span>✕ Clear</span>
+            </button>
+          </div>
         </div>
 
         {/* Advanced filters panel */}
