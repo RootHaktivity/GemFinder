@@ -5,6 +5,7 @@ import { useSearchHistory } from './hooks/useSearchHistory';
 import RepoCard from './components/RepoCard';
 import SearchBar from './components/SearchBar';
 import SkeletonCard from './components/SkeletonCard';
+import './theme.css';
 
 const SKELETON_COUNT = 6;
 
@@ -107,211 +108,146 @@ function App() {
 
   // ── Render ───────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-950 to-black text-cyan-100 font-mono">
+    <>
+      {/* Ambient Background */}
+      <div className="ambient-bg">
+        <div className="orb orb-1"></div>
+        <div className="orb orb-2"></div>
+        <div className="orb orb-3"></div>
+      </div>
 
-      {/* Navigation */}
-      <nav className="border-b border-slate-700/50 bg-slate-950/70 backdrop-blur sticky top-0 z-10 shadow-lg shadow-cyan-500/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-2xl">💎</span>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-emerald-400 via-green-400 to-cyan-400 bg-clip-text text-transparent">
-                GemFinder
-              </h1>
-            </div>
+      {/* Grid Overlay */}
+      <div className="grid-overlay"></div>
 
-            <div className="flex items-center gap-4">
-              {/* Tabs */}
-              <div className="flex gap-1 bg-slate-800/50 rounded-lg p-1 border border-slate-700/30">
-                <button
-                  onClick={() => setActiveTab('search')}
-                  className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                    activeTab === 'search'
-                      ? 'bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-900 shadow-lg shadow-cyan-500/50'
-                      : 'text-slate-400 hover:text-cyan-100'
-                  }`}
-                >
-                  🔍 Search
-                </button>
-                <button
-                  onClick={() => setActiveTab('saved')}
-                  className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center gap-1.5 ${
-                    activeTab === 'saved'
-                      ? 'bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-900 shadow-lg shadow-emerald-500/50'
-                      : 'text-slate-400 hover:text-cyan-100'
-                  }`}
-                >
-                  ❤️ Saved
-                  {bookmarks.length > 0 && (
-                    <span className="bg-emerald-500/80 text-slate-900 text-xs rounded-full px-1.5 py-0.5 leading-none font-bold">
-                      {bookmarks.length}
-                    </span>
-                  )}
-                </button>
-              </div>
+      <div className="app-container">
 
-              <a
-                href="https://github.com/RootHaktivity/github-search"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-slate-400 hover:text-cyan-400 transition-colors text-sm font-semibold"
-              >
-                GitHub ↗
-              </a>
-            </div>
-          </div>
-        </div>
-      </nav>
+      {/* Header */}
+      <header className="header text-center mb-8">
+        <h1 className="brand-name">GemFinder</h1>
+        <p className="tagline">AI-Powered GitHub Discovery</p>
+      </header>
+
+      {/* Tab Navigation */}
+      <div className="tab-buttons">
+        <button 
+          className={`tab-btn ${activeTab === 'search' ? 'active' : ''}`}
+          onClick={() => setActiveTab('search')}
+        >
+          🔍 Search Repos
+        </button>
+        <button 
+          className={`tab-btn ${activeTab === 'saved' ? 'active' : ''}`}
+          onClick={() => setActiveTab('saved')}
+        >
+          ❤️ Bookmarks {bookmarks.length > 0 && `(${bookmarks.length})`}
+        </button>
+      </div>
 
       {/* ── SEARCH TAB ── */}
       {activeTab === 'search' && (
-        <>
-          {/* Hero */}
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-            <div className="text-center mb-10">
-              <h2 className="text-5xl sm:text-6xl font-bold mb-4 text-cyan-100">
-                Find{' '}
-                <span className="bg-gradient-to-r from-emerald-400 via-green-400 to-cyan-400 bg-clip-text text-transparent">
-                  Hidden GitHub Gems
-                </span>
-              </h2>
-              <p className="text-xl text-slate-400 max-w-2xl mx-auto">
-                AI-powered summaries · Advanced filters · Zero fluff.
-              </p>
+        <div className="results-container">
+          {/* Search Section */}
+          <div className="search-section">
+            <div className="search-container">
+              <SearchBar
+                onSearch={handleSearch}
+                onSurprise={handleSurprise}
+                loading={loading}
+                history={history}
+                onRemoveHistory={removeFromHistory}
+              />
             </div>
-
-            <SearchBar
-              onSearch={handleSearch}
-              onSurprise={handleSurprise}
-              loading={loading}
-              history={history}
-              onRemoveHistory={removeFromHistory}
-            />
           </div>
+
+          {/* Loading State */}
+          {loading && (
+            <div className="results-grid">
+              {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
+                <SkeletonCard key={i} />
+              ))}
+            </div>
+          )}
+
+          {/* Error State */}
+          {error && !loading && (
+            <div className="error-message">
+              <strong>❌ Error:</strong> {error}
+              {error.toLowerCase().includes('rate limit') && (
+                <p style={{ marginTop: '0.75rem', fontSize: '0.9rem' }}>
+                  💡 Try again later, or add a GITHUB_TOKEN to Vercel.
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* Empty State */}
+          {!loading && !searched && (
+            <div className="empty-state">
+              <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔍</div>
+              <h3>Start Searching for Hidden Gems</h3>
+              <p>Use advanced filters to find repos by language, stars, or activity.</p>
+            </div>
+          )}
+
+          {/* No Results */}
+          {!loading && searched && results.length === 0 && !error && (
+            <div className="empty-state">
+              <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🤔</div>
+              <h3>No Repositories Found</h3>
+              <p>Try relaxing your filters or using a different search term.</p>
+            </div>
+          )}
 
           {/* Results */}
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-
-            {/* Skeleton loading */}
-            {loading && (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
-                  <SkeletonCard key={i} />
+          {results.length > 0 && !loading && (
+            <>
+              <div style={{ textAlign: 'center', marginBottom: '2rem', color: 'rgba(255,255,255,0.7)', fontSize: '0.95rem' }}>
+                Found <strong style={{ color: 'var(--primary)' }}>{results.length}</strong> of <strong>{totalCount.toLocaleString()}</strong> repos for "<strong style={{ color: 'var(--secondary)' }}>{currentQuery}</strong>"
+              </div>
+              <div className="results-grid">
+                {results.map((repo, idx) => (
+                  <RepoCard
+                    key={`${repo.html_url}-${idx}`}
+                    repo={repo}
+                    isBookmarked={isBookmarked(repo.html_url)}
+                    onToggleBookmark={toggleBookmark}
+                  />
                 ))}
               </div>
-            )}
 
-            {/* Error */}
-            {error && !loading && (
-              <div className="bg-red-950/50 border border-red-700/50 rounded-lg p-4 mb-6 backdrop-blur-sm">
-                <p className="text-red-200 font-semibold">❌ Error</p>
-                <p className="text-red-100 text-sm mt-1">{error}</p>
-                {error.toLowerCase().includes('rate limit') && (
-                  <p className="text-red-100 text-sm mt-2">
-                    💡 Try again in a few minutes, or add a GITHUB_TOKEN to your Vercel environment.
-                  </p>
-                )}
-              </div>
-            )}
-
-            {/* Empty state */}
-            {!loading && !searched && (
-              <div className="text-center py-20">
-                <div className="text-6xl mb-4">🔍</div>
-                <p className="text-cyan-100 text-lg">
-                  Start searching to discover hidden GitHub gems!
-                </p>
-                <p className="text-slate-400 text-sm mt-2">
-                  Use the Advanced Filters to narrow by language, stars, or activity.
-                </p>
-              </div>
-            )}
-
-            {/* No results */}
-            {!loading && searched && results.length === 0 && !error && (
-              <div className="text-center py-20">
-                <div className="text-6xl mb-4">🤔</div>
-                <p className="text-cyan-100 text-lg">
-                  No repositories found for "{currentQuery}".
-                </p>
-                <p className="text-slate-400 text-sm mt-2">
-                  Try relaxing your filters or using a different search term.
-                </p>
-              </div>
-            )}
-
-            {/* Results grid */}
-            {results.length > 0 && !loading && (
-              <>
-                <div className="flex items-center justify-between mb-6">
-                  <p className="text-slate-300 text-sm">
-                    Showing{' '}
-                    <span className="text-emerald-400 font-semibold">{results.length}</span>
-                    {totalCount > 0 && (
-                      <> of <span className="text-cyan-100 font-semibold">{totalCount.toLocaleString()}</span></>
-                    )}{' '}
-                    results for "
-                    <span className="text-green-400 font-semibold">{currentQuery}</span>"
-                  </p>
-                  {history.length > 0 && (
-                    <button
-                      onClick={clearHistory}
-                      className="text-xs text-slate-400 hover:text-red-400 transition-colors"
-                    >
-                      Clear history
-                    </button>
-                  )}
+              {/* Load More */}
+              {hasMore && (
+                <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+                  <button
+                    onClick={handleLoadMore}
+                    disabled={loadingMore}
+                    className="btn-primary"
+                    style={{ opacity: loadingMore ? 0.6 : 1 }}
+                  >
+                    {loadingMore ? '⏳ Loading...' : '⬇️ Load More'}
+                  </button>
                 </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {results.map((repo, idx) => (
-                    <RepoCard
-                      key={`${repo.html_url}-${idx}`}
-                      repo={repo}
-                      isBookmarked={isBookmarked(repo.html_url)}
-                      onToggleBookmark={toggleBookmark}
-                    />
-                  ))}
-                </div>
-
-                {/* Load More */}
-                {hasMore && (
-                  <div className="flex justify-center mt-10">
-                    <button
-                      onClick={handleLoadMore}
-                      disabled={loadingMore}
-                      className="bg-slate-800/50 hover:bg-slate-700/70 border border-slate-600/50 text-slate-200 font-semibold py-3 px-8 rounded-xl backdrop-blur-sm hover:shadow-lg hover:shadow-cyan-500/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                    >
-                      {loadingMore ? (
-                        <>
-                          <span className="animate-spin">🔄</span> Loading…
-                        </>
-                      ) : (
-                        <>⬇️ Load More Results</>
-                      )}
-                    </button>
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-        </>
+              )}
+            </>
+          )}
+        </div>
       )}
 
       {/* ── SAVED TAB ── */}
       {activeTab === 'saved' && (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h2 className="text-3xl font-bold text-cyan-100">❤️ Saved Repos</h2>
-              <p className="text-slate-400 text-sm mt-1">
-                {bookmarks.length} repo{bookmarks.length !== 1 ? 's' : ''} bookmarked
-              </p>
-            </div>
+        <div className="results-container">
+          <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+            <h2 style={{ fontSize: '1.8rem', marginBottom: '0.5rem', color: 'var(--primary)' }}>
+              ❤️ Saved Repositories
+            </h2>
+            <p style={{ color: 'rgba(255,255,255,0.6)' }}>
+              {bookmarks.length} repo{bookmarks.length !== 1 ? 's' : ''} bookmarked
+            </p>
             {bookmarks.length > 0 && (
               <button
                 onClick={clearBookmarks}
-                className="text-sm text-slate-400 hover:text-red-400 transition-colors border border-slate-700/50 hover:border-red-500/50 rounded-lg px-3 py-1.5"
+                className="btn-secondary"
+                style={{ marginTop: '1rem' }}
               >
                 🗑️ Clear All
               </button>
@@ -319,15 +255,13 @@ function App() {
           </div>
 
           {bookmarks.length === 0 ? (
-            <div className="text-center py-20">
-              <div className="text-6xl mb-4">🤍</div>
-              <p className="text-cyan-100 text-lg">No saved repos yet.</p>
-              <p className="text-slate-400 text-sm mt-2">
-                Click the 🤍 button on any result card to bookmark it here.
-              </p>
+            <div className="empty-state">
+              <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🤍</div>
+              <h3>No Saved Repos Yet</h3>
+              <p>Click the heart icon on search results to bookmark them here.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="results-grid">
               {bookmarks.map((repo, idx) => (
                 <RepoCard
                   key={`saved-${repo.html_url}-${idx}`}
@@ -340,16 +274,8 @@ function App() {
           )}
         </div>
       )}
-
-      {/* Footer */}
-      <footer className="border-t border-slate-700/50 bg-slate-950/70 backdrop-blur mt-auto shadow-lg shadow-cyan-500/5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <p className="text-slate-400 text-sm text-center">
-            Developed by Leegion @ Roothaktivity
-          </p>
-        </div>
-      </footer>
     </div>
+    </>
   );
 }
 
