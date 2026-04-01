@@ -287,6 +287,24 @@ body {
   box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
 }
 
+/* Desktop button layout - side by side */
+.surprise-me-btn {
+  width: auto;
+  flex: 1;
+}
+
+.advanced-button-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1rem;
+}
+
+.advanced-button-row button {
+  width: auto;
+  flex-shrink: 0;
+}
+
 /* ═══════════════════════════════════════════════════════════════
    TABS & NAVIGATION
    ═══════════════════════════════════════════════════════════════ */
@@ -583,6 +601,17 @@ body {
     width: 100%;
   }
 
+  /* Tablet button layout - keep side by side but responsive */
+  .button-container {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .button-container > div:first-child {
+    flex: 1;
+    min-width: 150px;
+  }
+
   .results-grid {
     grid-template-columns: 1fr;
     gap: 1.5rem;
@@ -629,9 +658,28 @@ body {
     border-radius: 12px;
   }
 
-  /* Swap Advanced and Surprise Me button positions on mobile */
-  .action-buttons-row {
-    flex-direction: row-reverse;
+  /* Mobile button layout - Surprise Me full width, Advanced to the left below */
+  .button-container {
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+  }
+
+  .button-container > div:first-child {
+    width: 100%;
+  }
+
+  .surprise-me-btn {
+    width: 100%;
+  }
+
+  .advanced-button-row {
+    display: flex;
+    justify-content: flex-start;
+    width: auto;
+  }
+
+  .advanced-button-row button {
+    width: auto;
   }
 
   .results-grid {

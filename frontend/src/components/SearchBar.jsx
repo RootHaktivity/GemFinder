@@ -181,54 +181,61 @@ export default function SearchBar({ onSearch, onSurprise, loading, history = [],
           </button>
         </div>
 
-        {/* Action row */}
-        <div className="action-buttons-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
-          <button
-            type="button"
-            onClick={() => setShowAdvanced((v) => !v)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              fontSize: '0.9rem',
-              padding: '0.5rem 0.75rem',
-              borderRadius: '8px',
-              border: showAdvanced || hasActiveFilters ? '1px solid rgba(0, 240, 255, 0.7)' : '1px solid rgba(100, 120, 150, 0.5)',
-              background: showAdvanced || hasActiveFilters ? 'rgba(0, 240, 255, 0.1)' : 'transparent',
-              color: showAdvanced || hasActiveFilters ? 'var(--primary)' : 'rgba(255, 255, 255, 0.6)',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease'
-            }}
-          >
-            <span>⚙️ Advanced</span>
-            {hasActiveFilters && (
-              <span style={{
-                background: 'rgba(0, 240, 255, 0.8)',
-                color: 'var(--dark-1)',
-                fontSize: '0.75rem',
-                borderRadius: '50%',
-                padding: '0 0.4rem',
-                fontWeight: 'bold'
-              }}>
-                ON
-              </span>
-            )}
-          </button>
+        {/* Button Container - Side by side on desktop, stacked on mobile */}
+        <div className="button-container" style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-start', alignItems: 'flex-start', marginBottom: '1rem', flexWrap: 'wrap' }}>
+          {/* Surprise Me button row */}
+          <div style={{ flex: 1, minWidth: '200px' }}>
+            <button
+              type="button"
+              onClick={() => onSurprise(filters)}
+              disabled={loading}
+              className="btn-secondary surprise-me-btn"
+              style={{
+                width: '100%',
+                padding: '0.75rem 1rem',
+                fontSize: '0.9rem',
+                opacity: loading ? 0.5 : 1,
+                cursor: loading ? 'not-allowed' : 'pointer'
+              }}
+            >
+              ✨ Surprise Me!
+            </button>
+          </div>
 
-          <button
-            type="button"
-            onClick={() => onSurprise(filters)}
-            disabled={loading}
-            className="btn-secondary"
-            style={{
-              padding: '0.5rem 1rem',
-              fontSize: '0.9rem',
-              opacity: loading ? 0.5 : 1,
-              cursor: loading ? 'not-allowed' : 'pointer'
-            }}
-          >
-            ✨ Surprise Me!
-          </button>
+          {/* Advanced button row */}
+          <div className="advanced-button-row" style={{ marginBottom: 0 }}>
+            <button
+              type="button"
+              onClick={() => setShowAdvanced((v) => !v)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                fontSize: '0.9rem',
+                padding: '0.5rem 0.75rem',
+                borderRadius: '8px',
+                border: showAdvanced || hasActiveFilters ? '1px solid rgba(0, 240, 255, 0.7)' : '1px solid rgba(100, 120, 150, 0.5)',
+                background: showAdvanced || hasActiveFilters ? 'rgba(0, 240, 255, 0.1)' : 'transparent',
+                color: showAdvanced || hasActiveFilters ? 'var(--primary)' : 'rgba(255, 255, 255, 0.6)',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease'
+              }}
+            >
+              <span>⚙️ Advanced</span>
+              {hasActiveFilters && (
+                <span style={{
+                  background: 'rgba(0, 240, 255, 0.8)',
+                  color: 'var(--dark-1)',
+                  fontSize: '0.75rem',
+                  borderRadius: '50%',
+                  padding: '0 0.4rem',
+                  fontWeight: 'bold'
+                }}>
+                  ON
+                </span>
+              )}
+            </button>
+          </div>
         </div>
 
         {/* Advanced filters panel */}
