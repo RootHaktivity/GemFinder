@@ -337,16 +337,11 @@ body {
   white-space: nowrap;
 }
 
+/* Hover effect for action buttons - Advanced and Reset */
 .action-buttons-row button:hover {
-  border-color: rgba(255, 100, 100, 0.8) !important;
-  background: rgba(255, 100, 100, 0.05) !important;
-  box-shadow: 0 0 15px rgba(255, 100, 100, 0.1) !important;
-}
-
-.action-buttons-row button:hover {
-  border-color: rgba(255, 100, 100, 0.8) !important;
-  background: rgba(255, 100, 100, 0.05) !important;
-  box-shadow: 0 0 15px rgba(255, 100, 100, 0.1) !important;
+  border-color: rgba(100, 200, 255, 0.8) !important;
+  background: rgba(100, 200, 255, 0.05) !important;
+  box-shadow: 0 0 15px rgba(100, 200, 255, 0.1) !important;
 }
 
 /* ═══════════════════════════════════════════════════════════════

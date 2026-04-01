@@ -237,12 +237,12 @@ export default function SearchBar({ onSearch, onSurprise, loading, history = [],
               )}
             </button>
 
-            {/* Clear Search button */}
+            {/* Reset Search button - acts as home button */}
             <button
               type="button"
               onClick={() => {
-                setQuery('');
-                setFilters(DEFAULT_FILTERS);
+                // Reset everything and navigate to home
+                window.location.href = window.location.pathname;
               }}
               style={{
                 display: 'flex',
@@ -251,15 +251,15 @@ export default function SearchBar({ onSearch, onSurprise, loading, history = [],
                 fontSize: '0.9rem',
                 padding: '0.5rem 0.75rem',
                 borderRadius: '8px',
-                border: '1px solid rgba(255, 100, 100, 0.5)',
+                border: '1px solid rgba(100, 150, 200, 0.5)',
                 background: 'transparent',
-                color: 'rgba(255, 150, 150, 0.8)',
+                color: 'rgba(100, 200, 255, 0.8)',
                 cursor: 'pointer',
                 transition: 'all 0.3s ease',
                 whiteSpace: 'nowrap'
               }}
             >
-              <span>✕ Clear</span>
+              <span>🏠 Reset</span>
             </button>
           </div>
         </div>
