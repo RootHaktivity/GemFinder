@@ -1,5 +1,5 @@
 const API_BASE = import.meta.env.PROD
-  ? 'https://github-search-git-main-sadisticpentester-5972s-projects.vercel.app'
+  ? 'https://github-search-git-main-sadisticpentester-5972s-projects.vercel.app/api'
   : '/api';
 
 export async function searchRepos(query) {
@@ -7,12 +7,17 @@ export async function searchRepos(query) {
   const response = await fetch(url);
 
   if (!response.ok) {
-    const error = await response.json();
-    const message = error.error || `HTTP ${response.status}`;
+    let message = `HTTP ${response.status}`;
+    try {
+      const error = await response.json();
+      message = error.error || message;
+    } catch (_) {}
     throw new Error(message);
   }
 
-  return response.json();
+  const data = await response.json();
+  // API returns { query, count, results: [...] } — unwrap the array
+  return Array.isArray(data) ? data : (data.results || []);
 }
 
 export async function getRepoSummary(owner, repo) {
