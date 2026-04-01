@@ -89,7 +89,7 @@ function isTrending(pushedAt) {
   return diff < 7 * 24 * 60 * 60 * 1000; // 7 days
 }
 
-export default function RepoCard({ repo, isBookmarked, onToggleBookmark }) {
+export default function RepoCard({ repo, isBookmarked, onToggleBookmark, rankPosition, totalResults, isRanked }) {
   const [copied, setCopied] = useState(false);
   const [summary, setSummary] = useState(repo.ai_summary || null);
   const [loadingSummary, setLoadingSummary] = useState(!repo.ai_summary);
@@ -214,13 +214,6 @@ export default function RepoCard({ repo, isBookmarked, onToggleBookmark }) {
               🔥 Trending
             </span>
           )}
-
-          {/* Relevance Score - Shows when ranking is enabled */}
-          {typeof repo.relevance_score === 'number' && repo.relevance_score > 0 && (
-            <span style={{ fontSize: '0.85rem', color: 'var(--secondary)', border: '1px solid rgba(255, 0, 212, 0.5)', borderRadius: '20px', padding: '0.3rem 0.7rem', display: 'inline-flex', alignItems: 'center', gap: '0.4rem', fontWeight: '600', backgroundColor: 'rgba(255, 0, 212, 0.1)' }}>
-              📊 Score: {Math.round(repo.relevance_score)}
-            </span>
-          )}
         </div>
 
         {/* OS compatibility badges */}
@@ -243,14 +236,34 @@ export default function RepoCard({ repo, isBookmarked, onToggleBookmark }) {
         })()}
       </div>
 
-      {/* Gem Score badge */}
-      <div className="mb-3">
+      {/* Gem Score badge + Ranking Position */}
+      <div className="mb-3" style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center' }}>
         <span
           className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full border bg-opacity-10 ${gem.color} bg-opacity-10`}
         >
           {gem.label}
           <span className="opacity-60 font-normal">({gemScore}/100)</span>
         </span>
+        
+        {/* Ranking Position Badge */}
+        {isRanked && rankPosition && (
+          <span style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.4rem',
+            fontSize: '0.75rem',
+            fontWeight: '700',
+            padding: '0.35rem 0.6rem',
+            borderRadius: '20px',
+            border: '1.5px solid rgba(0, 240, 255, 0.6)',
+            backgroundColor: 'rgba(0, 240, 255, 0.15)',
+            color: 'rgba(0, 240, 255, 0.95)',
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px'
+          }}>
+            🏆 Ranked {rankPosition}/{totalResults}
+          </span>
+        )}
       </div>
 
       {/* AI Summary */}

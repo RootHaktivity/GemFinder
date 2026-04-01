@@ -232,6 +232,9 @@ function App() {
                     repo={repo}
                     isBookmarked={isBookmarked(repo.html_url)}
                     onToggleBookmark={toggleBookmark}
+                    rankPosition={rankingEnabled ? idx + (page - 1) * 3 + 1 : null}
+                    totalResults={totalCount}
+                    isRanked={rankingEnabled}
                   />
                 ))}
               </div>
