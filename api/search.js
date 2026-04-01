@@ -94,6 +94,8 @@ function stripMarkdown(text) {
     .replace(/[*_~]{1,2}([^*_~\n]+)[*_~]{1,2}/g, '$1') // bold/italic
     .replace(/<[^>]*>/g, '')                         // complete HTML tags
     .replace(/<[^\s<>]*/g, '')                       // partial/malformed HTML (no closing >)
+    .replace(/\s*\w+="[^"]*"?/g, '')                 // orphaned HTML attributes (double quotes, possibly unclosed)
+    .replace(/\s*\w+='[^']*'?/g, '')                 // orphaned HTML attributes (single quotes, possibly unclosed)
     .replace(/https?:\/\/\S+/g, '')                  // bare URLs
     .replace(/\n{3,}/g, '\n\n')                      // excess newlines
     .replace(/[ \t]{2,}/g, ' ')                      // excess spaces/tabs
