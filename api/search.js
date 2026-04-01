@@ -86,7 +86,8 @@ function stripMarkdown(text) {
     .replace(/!\[[\s\S]*?\]\(.*?\)/g, '')          // remove images
     .replace(/\[!\[[\s\S]*?\]\(.*?\)\]\(.*?\)/g, '') // badge links
     .replace(/\[([^\]]*)\]\(.*?\)/g, '$1')          // links → text (incl. empty [])
-    .replace(/#{1,6}\s*/g, '')                       // headings
+    .replace(/#{1,6}\s*/g, '')                       // ATX headings (#, ##, etc.)
+    .replace(/^[=\-]{3,}\s*$/gm, '')                 // setext heading underlines (=== or ---)
     .replace(/`{3}[\s\S]*?`{3}/g, '')               // fenced code blocks
     .replace(/`[^`\n]*`/g, '')                       // inline code
     .replace(/^>\s*/gm, '')                          // blockquotes
@@ -97,6 +98,7 @@ function stripMarkdown(text) {
     .replace(/\s*\w+="[^"]*"?/g, '')                 // orphaned HTML attributes (double quotes, possibly unclosed)
     .replace(/\s*\w+='[^']*'?/g, '')                 // orphaned HTML attributes (single quotes, possibly unclosed)
     .replace(/https?:\/\/\S+/g, '')                  // bare URLs
+    .replace(/\n[ \t]*\n[ \t]*\n/g, '\n\n')          // lines with only whitespace between newlines
     .replace(/\n{3,}/g, '\n\n')                      // excess newlines
     .replace(/[ \t]{2,}/g, ' ')                      // excess spaces/tabs
     .trim();
