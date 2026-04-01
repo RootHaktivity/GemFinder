@@ -1,45 +1,45 @@
 export default function SkeletonCard() {
   return (
-    <div className="card p-6 flex flex-col h-full animate-pulse">
+    <div className="skeleton-card" style={{ animation: 'shimmer 2s infinite' }}>
       {/* Header */}
-      <div className="mb-4">
-        <div className="flex items-start justify-between gap-2 mb-3">
-          <div className="h-5 bg-slate-700/50 rounded w-2/3"></div>
-          <div className="h-5 bg-slate-700/50 rounded w-12"></div>
+      <div style={{ marginBottom: '1rem' }}>
+        <div style={{ display: 'flex', alignItems: 'start', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.75rem' }}>
+          <div className="skeleton-line" style={{ width: '66%', height: '12px' }}></div>
+          <div className="skeleton-line" style={{ width: '48px', height: '12px' }}></div>
         </div>
-        <div className="h-3 bg-slate-700/50 rounded w-full mb-1"></div>
-        <div className="h-3 bg-slate-700/50 rounded w-4/5"></div>
+        <div className="skeleton-line" style={{ width: '100%', height: '10px', marginBottom: '0.25rem' }}></div>
+        <div className="skeleton-line" style={{ width: '80%', height: '10px' }}></div>
       </div>
 
       {/* Badges row */}
-      <div className="flex gap-2 mb-4">
-        <div className="h-5 bg-slate-700/50 rounded-full w-16"></div>
-        <div className="h-5 bg-slate-700/50 rounded-full w-12"></div>
-        <div className="h-5 bg-slate-700/50 rounded-full w-20"></div>
+      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
+        <div className="skeleton-line" style={{ width: '64px', height: '12px', borderRadius: '50%' }}></div>
+        <div className="skeleton-line" style={{ width: '48px', height: '12px', borderRadius: '50%' }}></div>
+        <div className="skeleton-line" style={{ width: '80px', height: '12px', borderRadius: '50%' }}></div>
       </div>
 
       {/* AI Summary box */}
-      <div className="flex-1 mb-4">
-        <div className="bg-slate-900/50 border border-slate-700/50 rounded p-4">
-          <div className="h-3 bg-slate-700/50 rounded w-20 mb-3"></div>
-          <div className="h-3 bg-slate-700/50 rounded w-full mb-2"></div>
-          <div className="h-3 bg-slate-700/50 rounded w-full mb-2"></div>
-          <div className="h-3 bg-slate-700/50 rounded w-3/4"></div>
+      <div style={{ flex: 1, marginBottom: '1rem' }}>
+        <div style={{ background: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '8px', padding: '1rem' }}>
+          <div className="skeleton-line" style={{ width: '80px', height: '10px', marginBottom: '0.75rem' }}></div>
+          <div className="skeleton-line" style={{ width: '100%', height: '10px', marginBottom: '0.5rem' }}></div>
+          <div className="skeleton-line" style={{ width: '100%', height: '10px', marginBottom: '0.5rem' }}></div>
+          <div className="skeleton-line" style={{ width: '75%', height: '10px' }}></div>
         </div>
       </div>
 
       {/* Topics */}
-      <div className="flex gap-2 mb-4">
-        <div className="h-5 bg-slate-700/50 rounded-full w-14"></div>
-        <div className="h-5 bg-slate-700/50 rounded-full w-18"></div>
-        <div className="h-5 bg-slate-700/50 rounded-full w-12"></div>
+      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
+        <div className="skeleton-line" style={{ width: '56px', height: '12px', borderRadius: '50%' }}></div>
+        <div className="skeleton-line" style={{ width: '72px', height: '12px', borderRadius: '50%' }}></div>
+        <div className="skeleton-line" style={{ width: '48px', height: '12px', borderRadius: '50%' }}></div>
       </div>
 
       {/* Footer buttons */}
-      <div className="flex gap-2">
-        <div className="flex-1 h-9 bg-slate-700/50 rounded-lg"></div>
-        <div className="h-9 w-9 bg-slate-700/50 rounded-lg"></div>
-        <div className="h-9 w-9 bg-slate-700/50 rounded-lg"></div>
+      <div style={{ display: 'flex', gap: '0.5rem' }}>
+        <div className="skeleton-line" style={{ flex: 1, height: '36px' }}></div>
+        <div className="skeleton-line" style={{ width: '36px', height: '36px' }}></div>
+        <div className="skeleton-line" style={{ width: '36px', height: '36px' }}></div>
       </div>
     </div>
   );
