@@ -241,7 +241,9 @@ export default function SearchBar({ onSearch, onSurprise, loading, history = [],
             <button
               type="button"
               onClick={() => {
-                // Reset everything and navigate to home
+                // Clear search history from localStorage
+                localStorage.removeItem('searchHistory');
+                // Navigate to clean home page
                 window.location.href = window.location.pathname;
               }}
               style={{
