@@ -241,8 +241,9 @@ export default function SearchBar({ onSearch, onSurprise, loading, history = [],
             <button
               type="button"
               onClick={() => {
-                // Clear search history from localStorage
-                localStorage.removeItem('searchHistory');
+                // Clear all app storage
+                localStorage.removeItem('hgs_search_history');
+                localStorage.removeItem('hgs_bookmarks');
                 // Navigate to clean home page
                 window.location.href = window.location.pathname;
               }}
