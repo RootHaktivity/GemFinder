@@ -81,18 +81,31 @@ async function fetchReadmeContent(owner, repo) {
   }
 }
 
+function stripMarkdown(text) {
+  return text
+    .replace(/!\[.*?\]\(.*?\)/g, '')      // remove images
+    .replace(/\[([^\]]+)\]\(.*?\)/g, '$1') // links → text
+    .replace(/#{1,6}\s+/g, '')             // headings
+    .replace(/`{1,3}[^`]*`{1,3}/g, '')    // inline/block code
+    .replace(/>\s+/g, '')                  // blockquotes
+    .replace(/[-*_]{3,}/g, '')             // horizontal rules
+    .replace(/[*_~]{1,2}([^*_~]+)[*_~]{1,2}/g, '$1') // bold/italic
+    .replace(/<[^>]+>/g, '')               // HTML tags
+    .replace(/\n{3,}/g, '\n\n')            // excess newlines
+    .trim();
+}
+
 async function summarizeWithHF(text) {
   if (!process.env.HF_TOKEN) {
     return 'No AI summary available (missing HF_TOKEN).';
   }
 
-  if (!text || text.trim().length < 50) {
+  const cleaned = stripMarkdown(text);
+
+  if (!cleaned || cleaned.length < 50) {
     return 'README is too short for a meaningful AI summary.';
   }
 
-  // Try the new inference API endpoint
-  const prompt = `Summarize in 1-2 sentences: ${text.slice(0, 500)}`;
-  
   try {
     const res = await fetch(
       'https://api-inference.huggingface.co/models/facebook/bart-large-cnn',
@@ -100,7 +113,7 @@ async function summarizeWithHF(text) {
         headers: { Authorization: `Bearer ${process.env.HF_TOKEN}` },
         method: 'POST',
         body: JSON.stringify({
-          inputs: text.slice(0, 500),
+          inputs: cleaned.slice(0, 800),
           parameters: {
             max_length: 100,
             min_length: 30,
