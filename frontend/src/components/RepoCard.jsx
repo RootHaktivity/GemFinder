@@ -247,20 +247,23 @@ export default function RepoCard({ repo, isBookmarked, onToggleBookmark, rankPos
         
         {/* Ranking Position Badge */}
         {isRanked && rankPosition && (
-          <span style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.4rem',
-            fontSize: '0.75rem',
-            fontWeight: '700',
-            padding: '0.35rem 0.6rem',
-            borderRadius: '20px',
-            border: '1.5px solid rgba(0, 240, 255, 0.6)',
-            backgroundColor: 'rgba(0, 240, 255, 0.15)',
-            color: 'rgba(0, 240, 255, 0.95)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.5px'
-          }}>
+          <span 
+            title="Ranking score based on: Name matches (10pts each) • Topics (8pts each) • Description (3pts each) • Language (5pts) • Stars (logarithmic). Shows position in results (X out of Total)."
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              fontSize: '0.75rem',
+              fontWeight: '700',
+              padding: '0.35rem 0.6rem',
+              borderRadius: '20px',
+              border: '1.5px solid rgba(0, 240, 255, 0.6)',
+              backgroundColor: 'rgba(0, 240, 255, 0.15)',
+              color: 'rgba(0, 240, 255, 0.95)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px',
+              cursor: 'help'
+            }}>
             🏆 Ranked {rankPosition}/{totalResults}
           </span>
         )}
