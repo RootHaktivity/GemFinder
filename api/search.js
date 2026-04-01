@@ -139,25 +139,26 @@ async function summarizeWithHF(text) {
 
     const data = await res.json();
 
+    let summary = null;
     if (Array.isArray(data) && data[0]?.summary_text) {
-      return data[0].summary_text;
+      summary = data[0].summary_text;
+    } else if (data?.summary_text) {
+      summary = data.summary_text;
     }
 
-    if (data?.summary_text) {
-      return data.summary_text;
+    if (summary) {
+      // Strip any residual markdown/HTML the model may have echoed back
+      const finalSummary = stripMarkdown(summary).trim();
+      if (finalSummary.length > 20) return finalSummary;
     }
 
-    // Fallback to README excerpt
-    return (
-      text.split('. ').slice(0, 2).join('. ').slice(0, 100) ||
-      'README summary unavailable.'
-    );
+    // Fallback: first 2 sentences of cleaned README
+    return cleaned.split('. ').slice(0, 2).join('. ').slice(0, 150).trim() ||
+      'README summary unavailable.';
   } catch (error) {
-    // Network error - return README excerpt as fallback
-    return (
-      text.split('. ').slice(0, 2).join('. ').slice(0, 100) ||
-      'README summary unavailable.'
-    );
+    // Network error - return cleaned README excerpt as fallback
+    return cleaned.split('. ').slice(0, 2).join('. ').slice(0, 150).trim() ||
+      'README summary unavailable.';
   }
 }
 
