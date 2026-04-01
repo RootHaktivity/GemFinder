@@ -182,7 +182,7 @@ export default function SearchBar({ onSearch, onSurprise, loading, history = [],
         </div>
 
         {/* Action row */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
+        <div className="action-buttons-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
           <button
             type="button"
             onClick={() => setShowAdvanced((v) => !v)}

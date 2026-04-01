@@ -629,6 +629,11 @@ body {
     border-radius: 12px;
   }
 
+  /* Swap Advanced and Surprise Me button positions on mobile */
+  .action-buttons-row {
+    flex-direction: row-reverse;
+  }
+
   .results-grid {
     gap: 1rem;
   }
