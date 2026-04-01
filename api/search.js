@@ -1,6 +1,4 @@
 const GITHUB_API_BASE = 'https://api.github.com';
-const HF_API_URL =
-  'https://api-inference.huggingface.co/models/facebook/bart-large-cnn';
 
 function buildGitHubHeaders() {
   const headers = {
@@ -15,10 +13,26 @@ function buildGitHubHeaders() {
   return headers;
 }
 
-async function fetchGitHubRepos(query) {
-  const url = `${GITHUB_API_BASE}/search/repositories?q=${encodeURIComponent(
-    query
-  )}&sort=stars&order=desc&per_page=5`;
+async function fetchGitHubRepos(query, { lang, min_stars, sort, active_only, page } = {}) {
+  // Build GitHub search qualifier string
+  let q = query;
+  if (lang) q += ` language:${lang}`;
+  if (min_stars && Number(min_stars) > 0) q += ` stars:>=${min_stars}`;
+  if (active_only) {
+    const sixMonthsAgo = new Date(Date.now() - 1000 * 60 * 60 * 24 * 180)
+      .toISOString()
+      .split('T')[0];
+    q += ` pushed:>${sixMonthsAgo}`;
+  }
+
+  const validSorts = ['stars', 'updated', 'forks', 'help-wanted-issues'];
+  const sortParam = validSorts.includes(sort) ? sort : 'stars';
+  const pageParam = Math.max(1, parseInt(page) || 1);
+
+  const url =
+    `${GITHUB_API_BASE}/search/repositories` +
+    `?q=${encodeURIComponent(q)}` +
+    `&sort=${sortParam}&order=desc&per_page=9&page=${pageParam}`;
 
   const res = await fetch(url, { headers: buildGitHubHeaders() });
 
@@ -196,6 +210,7 @@ export default async function handler(req, res) {
 
   try {
     let repos = [];
+    let total_count = 0;
 
     // Mode 1: Single repo lookup (repo=owner/repo)
     if (repoParam) {
@@ -208,25 +223,32 @@ export default async function handler(req, res) {
 
       const repoData = await fetchSingleRepo(owner, repo);
       repos = [repoData];
+      total_count = 1;
     }
     // Mode 2: Search for repos (q=search-terms)
     else {
-      const githubData = await fetchGitHubRepos(q);
+      const filters = {
+        lang: (req.query?.lang || '').trim(),
+        min_stars: req.query?.min_stars || 0,
+        sort: (req.query?.sort || 'stars').trim(),
+        active_only: req.query?.active_only === 'true',
+        page: req.query?.page || 1,
+      };
+      const githubData = await fetchGitHubRepos(q, filters);
       repos = githubData.items || [];
+      total_count = githubData.total_count || 0;
     }
 
     // Enrich each repo with README and AI summary
     const enriched = await Promise.all(
-      repos.slice(0, 5).map(async (repo) => {
+      repos.slice(0, 9).map(async (repo) => {
         const readme = await fetchReadmeContent(repo.owner.login, repo.name);
         const cleanedReadme = readme ? stripMarkdown(readme) : '';
 
         let ai_summary;
         if (cleanedReadme.length >= 50) {
-          // Enough clean text — send to HF for summarization
           ai_summary = await summarizeWithHF(readme);
         } else if (repo.description) {
-          // README is missing or mostly images/HTML — fall back to description
           ai_summary = repo.description;
         } else {
           ai_summary = 'No summary available (README is missing or image-only).';
@@ -234,15 +256,23 @@ export default async function handler(req, res) {
 
         return {
           name: repo.name,
+          full_name: repo.full_name,
           html_url: repo.html_url,
           description: repo.description,
           stars: repo.stargazers_count,
+          forks: repo.forks_count,
+          open_issues: repo.open_issues_count,
+          language: repo.language,
+          topics: repo.topics || [],
+          license: repo.license?.spdx_id || null,
+          pushed_at: repo.pushed_at,
+          created_at: repo.created_at,
           ai_summary,
         };
       })
     );
 
-    return res.status(200).json(enriched);
+    return res.status(200).json({ results: enriched, total_count });
   } catch (error) {
     const msg = error?.message || 'Unknown server error.';
     const status = msg.toLowerCase().includes('rate limit')
