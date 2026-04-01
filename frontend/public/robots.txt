@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Allow: /?q=*
+Disallow: /api/
+
+# Respect crawl delay
+Crawl-delay: 1
+
+# Sitemaps
+Sitemap: https://roothaktivity.github.io/GemFinder/sitemap.xml

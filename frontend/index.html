@@ -20,7 +20,10 @@
     <meta property="og:url" content="https://roothaktivity.github.io/GemFinder/">
     <meta property="og:title" content="GemFinder - AI-Powered GitHub Repository Discovery">
     <meta property="og:description" content="Find high-quality GitHub repositories with AI summaries and semantic search. Free and open source.">
-    <meta property="og:image" content="https://roothaktivity.github.io/GemFinder/og-image.png">
+    <meta property="og:image" content="https://roothaktivity.github.io/GemFinder/og-image.svg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:type" content="image/svg+xml">
     <meta property="og:site_name" content="GemFinder">
     <meta property="og:locale" content="en_US">
     
@@ -29,7 +32,7 @@
     <meta property="twitter:url" content="https://roothaktivity.github.io/GemFinder/">
     <meta property="twitter:title" content="GemFinder - AI-Powered GitHub Repository Discovery">
     <meta property="twitter:description" content="Find high-quality GitHub repositories with AI summaries and semantic search. Free and open source.">
-    <meta property="twitter:image" content="https://roothaktivity.github.io/GemFinder/og-image.png">
+    <meta property="twitter:image" content="https://roothaktivity.github.io/GemFinder/og-image.svg">
     <meta property="twitter:creator" content="@RootHaktivity">
     
     <!-- Mobile Specifics -->
@@ -42,9 +45,27 @@
     <link rel="icon" type="image/svg+xml" href="./vite.svg" />
     <link rel="apple-touch-icon" href="./vite.svg" />
     
-    <!-- Preconnect to external resources -->
+    <!-- Performance & Preload -->
     <link rel="preconnect" href="https://api.github.com">
     <link rel="dns-prefetch" href="https://huggingface.co">
+    <link rel="preload" as="style" href="/src/index.css">
+    <link rel="preload" as="script" href="/src/main.jsx">
+
+    <!-- Prefetch for likely next navigation -->
+    <link rel="prefetch" href="https://api.github.com/search/repositories?q=trending">
+    
+    <!-- Security & Standards -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+
+    <!-- Additional SEO Meta Tags -->
+    <meta name="revisit-after" content="7 days">
+    <meta name="distribution" content="global">
+    <meta name="rating" content="general">
+    <meta name="audience" content="developers">
+    <meta name="application-name" content="GemFinder">
+    <meta name="msapplication-TileColor" content="#00ffdd">
+    <meta name="msapplication-TileImage" content="./vite.svg">
     
     <!-- JSON-LD Schema Markup -->
     <script type="application/ld+json">
@@ -52,9 +73,12 @@
       "@context": "https://schema.org",
       "@type": "WebApplication",
       "name": "GemFinder",
-      "description": "AI-powered GitHub repository discovery with intelligent search and summaries",
-      "url": "https://roothaktivity.github.io/github-search/",
+      "alternateName": "GitHub Hidden Gem Search",
+      "description": "AI-powered GitHub repository discovery with intelligent search and summaries. Find high-quality open source projects with semantic search and automated summaries.",
+      "url": "https://roothaktivity.github.io/GemFinder/",
+      "image": "https://roothaktivity.github.io/GemFinder/og-image.svg",
       "applicationCategory": "DeveloperApplication",
+      "applicationSubCategory": "SearchEngine",
       "offers": {
         "@type": "Offer",
         "price": "0",
@@ -64,7 +88,36 @@
         "@type": "Person",
         "name": "Leegion",
         "url": "https://github.com/RootHaktivity"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "RootHaktivity",
+        "logo": "https://roothaktivity.github.io/GemFinder/og-image.svg"
+      },
+      "inLanguage": "en-US",
+      "isAccessibleForFree": true,
+      "operatingSystem": "Web",
+      "softwareRequirements": "Modern web browser",
+      "releaseNotes": "AI-powered semantic search with automatic repository summaries",
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "5",
+        "ratingCount": "1"
       }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://roothaktivity.github.io/GemFinder/"
+        }
+      ]
     }
     </script>
   </head>

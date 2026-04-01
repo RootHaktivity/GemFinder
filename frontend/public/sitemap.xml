@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:mobile="http://www.mobile.googlebot.org/schemas/mobile-mobile/1.0">
+
+  <!-- Home page -->
+  <url>
+    <loc>https://roothaktivity.github.io/GemFinder/</loc>
+    <lastmod>2026-04-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://roothaktivity.github.io/GemFinder/og-image.svg</image:loc>
+      <image:title>GemFinder - AI-Powered GitHub Search</image:title>
+    </image:image>
+  </url>
+
+  <!-- General Search Queries -->
+  <url>
+    <loc>https://roothaktivity.github.io/GemFinder/?q=github+search</loc>
+    <lastmod>2026-04-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+  <url>
+    <loc>https://roothaktivity.github.io/GemFinder/?q=repository+discovery</loc>
+    <lastmod>2026-04-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://roothaktivity.github.io/GemFinder/?q=ai+powered+search</loc>
+    <lastmod>2026-04-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://roothaktivity.github.io/GemFinder/?q=trending+repositories</loc>
+    <lastmod>2026-04-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <url>
+    <loc>https://roothaktivity.github.io/GemFinder/?q=hidden+gems</loc>
+    <lastmod>2026-04-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- Language-Specific Searches -->
+  <url>
+    <loc>https://roothaktivity.github.io/GemFinder/?q=javascript+tools</loc>
+    <lastmod>2026-04-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://roothaktivity.github.io/GemFinder/?q=python+libraries</loc>
+    <lastmod>2026-04-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://roothaktivity.github.io/GemFinder/?q=react+components</loc>
+    <lastmod>2026-04-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://roothaktivity.github.io/GemFinder/?q=rust+cli+tools</loc>
+    <lastmod>2026-04-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.75</priority>
+  </url>
+
+  <url>
+    <loc>https://roothaktivity.github.io/GemFinder/?q=go+programming</loc>
+    <lastmod>2026-04-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.75</priority>
+  </url>
+
+  <url>
+    <loc>https://roothaktivity.github.io/GemFinder/?q=open+source+projects</loc>
+    <lastmod>2026-04-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Framework-Specific -->
+  <url>
+    <loc>https://roothaktivity.github.io/GemFinder/?q=vue+js</loc>
+    <lastmod>2026-04-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.75</priority>
+  </url>
+
+  <url>
+    <loc>https://roothaktivity.github.io/GemFinder/?q=typescript+projects</loc>
+    <lastmod>2026-04-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.75</priority>
+  </url>
+
+  <!-- Developer Tools & Utilities -->
+  <url>
+    <loc>https://roothaktivity.github.io/GemFinder/?q=development+tools</loc>
+    <lastmod>2026-04-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+</urlset>
