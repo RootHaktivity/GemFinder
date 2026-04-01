@@ -414,33 +414,29 @@ export default async function handler(req, res) {
 
     // Apply ranking if requested
     let processRepos = repos.slice(0, batchSize);
-    if (shouldRank && q) {
+    if (shouldRank) {
       processRepos = rerankRepositories(processRepos, q);
     }
 
-    // Enrich each repo with README (but skip AI summary for speed)
-    const enriched = await Promise.all(
-      processRepos.map(async (repo) => {
-        const readme = await fetchReadmeContent(repo.owner.login, repo.name);
-
-        return {
-          name: repo.name,
-          full_name: repo.full_name,
-          html_url: repo.html_url,
-          description: repo.description,
-          stars: repo.stargazers_count,
-          forks: repo.forks_count,
-          open_issues: repo.open_issues_count,
-          language: repo.language,
-          topics: repo.topics || [],
-          license: repo.license?.spdx_id || null,
-          pushed_at: repo.pushed_at,
-          created_at: repo.created_at,
-          ai_summary: null, // Will be fetched client-side via separate endpoint
-          relevance_score: repo.relevance_score || null, // AI reranking score (if requested)
-        };
-      })
-    );
+    // Enrich each repo (skip README and AI summary for speed - both fetched client-side)
+    const enriched = processRepos.map((repo) => {
+      return {
+        name: repo.name,
+        full_name: repo.full_name,
+        html_url: repo.html_url,
+        description: repo.description,
+        stars: repo.stargazers_count,
+        forks: repo.forks_count,
+        open_issues: repo.open_issues_count,
+        language: repo.language,
+        topics: repo.topics || [],
+        license: repo.license?.spdx_id || null,
+        pushed_at: repo.pushed_at,
+        created_at: repo.created_at,
+        ai_summary: null, // Will be fetched client-side via separate endpoint
+        relevance_score: repo.relevance_score || null, // Ranking score (if requested)
+      };
+    });
 
     return res.status(200).json({ results: enriched, total_count });
   } catch (error) {

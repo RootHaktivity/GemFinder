@@ -74,6 +74,7 @@ function App() {
       try {
         const data = await searchRepos(query, filters, pageNum, rankingEnabled);
         const newResults = data.results || [];
+        console.log('[SEARCH]', { query, ranking: rankingEnabled, resultsCount: newResults.length, hasRelevance: newResults[0]?.relevance_score });
 
         if (isFirstPage) {
           setResults(newResults);

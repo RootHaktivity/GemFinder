@@ -215,10 +215,10 @@ export default function RepoCard({ repo, isBookmarked, onToggleBookmark }) {
             </span>
           )}
 
-          {/* AI Relevance Score */}
-          {repo.relevance_score !== null && repo.relevance_score !== undefined && (
-            <span style={{ fontSize: '0.85rem', color: 'var(--secondary)', border: '1px solid rgba(255, 0, 212, 0.3)', borderRadius: '20px', padding: '0.25rem 0.5rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
-              🤖 Match: {Math.round(repo.relevance_score)}
+          {/* Relevance Score - Shows when ranking is enabled */}
+          {typeof repo.relevance_score === 'number' && repo.relevance_score > 0 && (
+            <span style={{ fontSize: '0.85rem', color: 'var(--secondary)', border: '1px solid rgba(255, 0, 212, 0.5)', borderRadius: '20px', padding: '0.3rem 0.7rem', display: 'inline-flex', alignItems: 'center', gap: '0.4rem', fontWeight: '600', backgroundColor: 'rgba(255, 0, 212, 0.1)' }}>
+              📊 Score: {Math.round(repo.relevance_score)}
             </span>
           )}
         </div>
