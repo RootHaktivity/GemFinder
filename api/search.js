@@ -186,7 +186,11 @@ async function summarizeWithHF(meaningfulText, description, readme) {
     ? description
     : (excerptFallback || 'No summary available.');
 
-  if (!process.env.HF_TOKEN) return fallback;
+  // Check if token exists
+  if (!process.env.HF_TOKEN) {
+    console.error('[SUMMARIZE] HF_TOKEN is not set in environment variables');
+    return fallback;
+  }
 
   // If meaningful text is too short, try to extract from raw README
   let textToSummarize = meaningfulText;
@@ -198,9 +202,15 @@ async function summarizeWithHF(meaningfulText, description, readme) {
     }
   }
 
-  if (!textToSummarize || textToSummarize.length < 50) return fallback;
+  console.log(`[SUMMARIZE] textToSummarize length: ${textToSummarize?.length || 0}, fallback: ${fallback.substring(0, 50)}...`);
+
+  if (!textToSummarize || textToSummarize.length < 50) {
+    console.error('[SUMMARIZE] Text too short, using fallback');
+    return fallback;
+  }
 
   try {
+    console.log(`[SUMMARIZE] Calling Hugging Face API with token: ${process.env.HF_TOKEN?.substring(0, 10)}...`);
     const res = await fetch(
       'https://api-inference.huggingface.co/models/facebook/bart-large-cnn',
       {
@@ -213,14 +223,21 @@ async function summarizeWithHF(meaningfulText, description, readme) {
       }
     );
 
+    console.log(`[SUMMARIZE] HF API response status: ${res.status}`);
+
     if (res.status === 503) {
-      // Model loading — return fallback rather than a confusing message
+      console.log('[SUMMARIZE] Model loading (503), using fallback');
       return fallback;
     }
 
-    if (!res.ok) return fallback;
+    if (!res.ok) {
+      const errText = await res.text();
+      console.error(`[SUMMARIZE] API error (${res.status}): ${errText}`);
+      return fallback;
+    }
 
     const data = await res.json();
+    console.log(`[SUMMARIZE] HF response:`, data);
 
     let summary = null;
     if (Array.isArray(data) && data[0]?.summary_text) {
@@ -231,11 +248,16 @@ async function summarizeWithHF(meaningfulText, description, readme) {
 
     if (summary) {
       const finalSummary = stripMarkdown(summary).trim();
-      if (isMeaningfulSummary(finalSummary)) return finalSummary;
+      if (isMeaningfulSummary(finalSummary)) {
+        console.log(`[SUMMARIZE] Success: ${finalSummary.substring(0, 50)}...`);
+        return finalSummary;
+      }
     }
 
+    console.log('[SUMMARIZE] Summary not meaningful, using fallback');
     return fallback;
-  } catch {
+  } catch (err) {
+    console.error('[SUMMARIZE] Exception:', err.message);
     return fallback;
   }
 }
