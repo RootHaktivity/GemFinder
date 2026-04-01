@@ -181,10 +181,10 @@ export default function SearchBar({ onSearch, onSurprise, loading, history = [],
           </button>
         </div>
 
-        {/* Button Container - Side by side on desktop, stacked on mobile */}
-        <div className="button-container" style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-start', alignItems: 'flex-start', marginBottom: '1rem', flexWrap: 'wrap' }}>
+        {/* Button Container - Desktop: Surprise Me | Advanced | Clear  |  Mobile: Surprise Me full width, Advanced and Clear below */}
+        <div className="button-container" style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-start', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap' }}>
           {/* Surprise Me button row */}
-          <div style={{ flex: 1, minWidth: '200px' }}>
+          <div className="surprise-me-wrapper" style={{ flex: 1, minWidth: '200px' }}>
             <button
               type="button"
               onClick={() => onSurprise(filters)}
@@ -202,8 +202,8 @@ export default function SearchBar({ onSearch, onSurprise, loading, history = [],
             </button>
           </div>
 
-          {/* Advanced button row */}
-          <div className="advanced-button-row" style={{ marginBottom: 0 }}>
+          {/* Advanced & Clear buttons row - side by side */}
+          <div className="action-buttons-row" style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
             <button
               type="button"
               onClick={() => setShowAdvanced((v) => !v)}
@@ -218,7 +218,8 @@ export default function SearchBar({ onSearch, onSurprise, loading, history = [],
                 background: showAdvanced || hasActiveFilters ? 'rgba(0, 240, 255, 0.1)' : 'transparent',
                 color: showAdvanced || hasActiveFilters ? 'var(--primary)' : 'rgba(255, 255, 255, 0.6)',
                 cursor: 'pointer',
-                transition: 'all 0.3s ease'
+                transition: 'all 0.3s ease',
+                whiteSpace: 'nowrap'
               }}
             >
               <span>⚙️ Advanced</span>
@@ -235,10 +236,8 @@ export default function SearchBar({ onSearch, onSurprise, loading, history = [],
                 </span>
               )}
             </button>
-          </div>
 
-          {/* Clear Search button */}
-          <div className="clear-button-row" style={{ marginBottom: 0 }}>
+            {/* Clear Search button */}
             <button
               type="button"
               onClick={() => {
@@ -256,7 +255,8 @@ export default function SearchBar({ onSearch, onSurprise, loading, history = [],
                 background: 'transparent',
                 color: 'rgba(255, 150, 150, 0.8)',
                 cursor: 'pointer',
-                transition: 'all 0.3s ease'
+                transition: 'all 0.3s ease',
+                whiteSpace: 'nowrap'
               }}
             >
               <span>✕ Clear</span>
