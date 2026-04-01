@@ -179,16 +179,26 @@ function isMeaningfulSummary(s) {
   return alphanumRatio > 0.5;
 }
 
-async function summarizeWithHF(meaningfulText, description) {
-  // Fallback chain: description → excerpt
-  const excerptFallback = meaningfulText.split('. ').slice(0, 2).join('. ').slice(0, 180).trim();
+async function summarizeWithHF(meaningfulText, description, readme) {
+  // Fallback chain: meaningful text excerpt → description → generic message
+  const excerptFallback = meaningfulText ? meaningfulText.split('. ').slice(0, 2).join('. ').slice(0, 180).trim() : '';
   const fallback = (description && description.length > 20)
     ? description
     : (excerptFallback || 'No summary available.');
 
   if (!process.env.HF_TOKEN) return fallback;
 
-  if (!meaningfulText || meaningfulText.length < 50) return fallback;
+  // If meaningful text is too short, try to extract from raw README
+  let textToSummarize = meaningfulText;
+  if (!textToSummarize || textToSummarize.length < 50) {
+    // Try the first 500 chars of stripped README as backup
+    if (readme && readme.length > 200) {
+      const stripped = stripMarkdown(readme);
+      textToSummarize = stripped.slice(0, 500).trim();
+    }
+  }
+
+  if (!textToSummarize || textToSummarize.length < 50) return fallback;
 
   try {
     const res = await fetch(
@@ -197,7 +207,7 @@ async function summarizeWithHF(meaningfulText, description) {
         headers: { Authorization: `Bearer ${process.env.HF_TOKEN}` },
         method: 'POST',
         body: JSON.stringify({
-          inputs: meaningfulText.slice(0, 900),
+          inputs: textToSummarize.slice(0, 900),
           parameters: { max_length: 100, min_length: 30 },
         }),
       }
@@ -295,7 +305,7 @@ export default async function handler(req, res) {
         // Extract meaningful prose (skips ASCII art, badges, version strings)
         const meaningfulText = readme ? extractMeaningfulText(readme) : '';
 
-        const ai_summary = await summarizeWithHF(meaningfulText, repo.description);
+        const ai_summary = await summarizeWithHF(meaningfulText, repo.description, readme);
 
         return {
           name: repo.name,
