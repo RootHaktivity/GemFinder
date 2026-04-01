@@ -1,11 +1,16 @@
-# GitHub Hidden Gem Search Engine
+# GemFinder
 
-> Find high-quality GitHub repos using AI-powered summaries + free-tier APIs
+> AI-powered GitHub repository discovery with intelligent search and summaries
+
+Find high-quality GitHub repos using semantic search, advanced filters, and AI-powered summaries—all for free.
 
 ## Features
 
-- 🔍 **Semantic Search** — Search GitHub repos with intelligent filtering
+- 🔍 **Smart Search** — Semantic GitHub repository discovery with advanced filtering
 - 🤖 **AI Summaries** — Auto-generate 2-sentence TL;DRs using Hugging Face BART model
+- 🎨 **Dark Hacker Theme** — Sleek neon cyan/emerald glassmorphic UI with JetBrains Mono
+- 🔖 **Bookmarks & History** — Save repos and track search history locally
+- 📊 **Hidden Gem Score** — Proprietary scoring algorithm rewards rising stars
 - 💰 **Zero Cost** — Runs entirely on free APIs and free hosting
   - Backend: Vercel Serverless (free tier)
   - Frontend: GitHub Pages (free)
@@ -133,3 +138,7 @@ If you hit HF limits, the app gracefully falls back to "AI summary unavailable".
 ## License
 
 MIT
+
+---
+
+**Developed by Leegion @ Roothaktivity**
