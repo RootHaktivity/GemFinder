@@ -214,8 +214,11 @@ async function summarizeWithHF(meaningfulText, description, readme) {
     const res = await fetch(
       'https://router.huggingface.co/hf-inference/models/facebook/bart-large-cnn',
       {
-        headers: { Authorization: `Bearer ${process.env.HF_TOKEN}` },
         method: 'POST',
+        headers: {
+          Authorization: `Bearer ${process.env.HF_TOKEN}`,
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
           inputs: textToSummarize.slice(0, 900),
           parameters: { max_length: 100, min_length: 30 },
