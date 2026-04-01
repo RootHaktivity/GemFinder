@@ -128,13 +128,11 @@ async function summarizeWithHF(text) {
     }
 
     if (!res.ok) {
-      // Fallback for unavailable models
-      const simpleSummary = text
-        .split('. ')
-        .slice(0, 2)
-        .join('. ')
-        .slice(0, 100);
-      return simpleSummary || 'README summary unavailable.';
+      // Fallback: use cleaned README excerpt (no raw markdown/HTML)
+      return (
+        cleaned.split('. ').slice(0, 2).join('. ').slice(0, 150).trim() ||
+        'README summary unavailable.'
+      );
     }
 
     const data = await res.json();
