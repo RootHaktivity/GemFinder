@@ -212,7 +212,7 @@ async function summarizeWithHF(meaningfulText, description, readme) {
   try {
     console.log(`[SUMMARIZE] Calling Hugging Face API with token: ${process.env.HF_TOKEN?.substring(0, 10)}...`);
     const res = await fetch(
-      'https://router.huggingface.co/models/facebook/bart-large-cnn',
+      'https://router.huggingface.co/hf-inference/models/facebook/bart-large-cnn',
       {
         headers: { Authorization: `Bearer ${process.env.HF_TOKEN}` },
         method: 'POST',
