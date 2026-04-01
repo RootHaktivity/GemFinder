@@ -214,6 +214,13 @@ export default function RepoCard({ repo, isBookmarked, onToggleBookmark }) {
               🔥 Trending
             </span>
           )}
+
+          {/* AI Relevance Score */}
+          {repo.relevance_score !== null && repo.relevance_score !== undefined && (
+            <span style={{ fontSize: '0.85rem', color: 'var(--secondary)', border: '1px solid rgba(255, 0, 212, 0.3)', borderRadius: '20px', padding: '0.25rem 0.5rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+              🤖 Match: {Math.round(repo.relevance_score)}
+            </span>
+          )}
         </div>
 
         {/* OS compatibility badges */}

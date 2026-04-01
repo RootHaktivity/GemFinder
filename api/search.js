@@ -299,6 +299,63 @@ async function getCachedSummary(owner, repo, readme, description) {
   return summary;
 }
 
+/**
+ * Calculate relevance score for a repo based on query match
+ * Considers: name, description, topics, language
+ */
+function calculateRelevanceScore(query, repo) {
+  const queryTerms = query.toLowerCase().split(/\s+/).filter(t => t.length > 2);
+  let score = 0;
+
+  const name = (repo.name || '').toLowerCase();
+  const desc = (repo.description || '').toLowerCase();
+  const topics = (repo.topics || []).map(t => t.toLowerCase());
+  const lang = (repo.language || '').toLowerCase();
+
+  // Name matches (highest weight - 10 points each)
+  queryTerms.forEach(term => {
+    if (name.includes(term)) score += 10;
+  });
+
+  // Topic matches (8 points each)
+  queryTerms.forEach(term => {
+    topics.forEach(topic => {
+      if (topic.includes(term) || term.includes(topic.split('-')[0])) {
+        score += 8;
+      }
+    });
+  });
+
+  // Description matches (3 points each)
+  queryTerms.forEach(term => {
+    const matches = (desc.match(new RegExp(term, 'g')) || []).length;
+    score += Math.min(matches, 3) * 3;
+  });
+
+  // Language bonus if mentioned in query (5 points)
+  if (lang && queryTerms.some(t => lang.includes(t))) {
+    score += 5;
+  }
+
+  // Star bonus (logarithmic scale, max 3 points)
+  const starScore = Math.min(3, Math.log10(Math.max(1, repo.stargazers_count)));
+  score += starScore;
+
+  return score;
+}
+
+/**
+ * Rerank repositories by relevance to query
+ */
+function rerankRepositories(repos, query) {
+  return repos
+    .map(repo => ({
+      ...repo,
+      relevance_score: calculateRelevanceScore(query, repo),
+    }))
+    .sort((a, b) => b.relevance_score - a.relevance_score);
+}
+
 export default async function handler(req, res) {
   setCORSHeaders(res);
 
@@ -351,9 +408,19 @@ export default async function handler(req, res) {
       total_count = githubData.total_count || 0;
     }
 
+    // Determine result count and whether to rerank
+    const shouldRerank = req.query?.rerank === 'true';
+    const resultCount = shouldRerank ? 15 : 3;
+
+    // Apply reranking if requested
+    let processRepos = repos.slice(0, resultCount);
+    if (shouldRerank && q) {
+      processRepos = rerankRepositories(processRepos, q);
+    }
+
     // Enrich each repo with README (but skip AI summary for speed)
     const enriched = await Promise.all(
-      repos.slice(0, 3).map(async (repo) => {
+      processRepos.map(async (repo) => {
         const readme = await fetchReadmeContent(repo.owner.login, repo.name);
 
         return {
@@ -370,6 +437,7 @@ export default async function handler(req, res) {
           pushed_at: repo.pushed_at,
           created_at: repo.created_at,
           ai_summary: null, // Will be fetched client-side via separate endpoint
+          relevance_score: repo.relevance_score || null, // AI reranking score (if requested)
         };
       })
     );

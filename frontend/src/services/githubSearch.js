@@ -36,12 +36,13 @@ function writeCache(key, data) {
  * @param {string} query
  * @param {{ lang?: string, min_stars?: number, sort?: string, active_only?: boolean }} filters
  * @param {number} page
+ * @param {boolean} rerank - If true, return 15 results ranked by AI relevance
  * @returns {Promise<{ results: Array, total_count: number }>}
  */
-export async function searchRepos(query, filters = {}, page = 1) {
+export async function searchRepos(query, filters = {}, page = 1, rerank = false) {
   const cacheKey = getCacheKey(query, filters, page);
   const cached = readCache(cacheKey);
-  if (cached) return cached;
+  if (cached && !rerank) return cached;
 
   const params = new URLSearchParams({ q: query, page });
   if (filters.lang) params.set('lang', filters.lang);
@@ -51,6 +52,7 @@ export async function searchRepos(query, filters = {}, page = 1) {
   if (filters.active_only) params.set('active_only', 'true');
   if (filters.os) params.set('os', filters.os);
   if (filters.category) params.set('category', filters.category);
+  if (rerank) params.set('rerank', 'true');
 
   const url = `${API_BASE}/search?${params.toString()}`;
   const response = await fetch(url);
