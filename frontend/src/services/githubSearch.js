@@ -49,6 +49,7 @@ export async function searchRepos(query, filters = {}, page = 1) {
     params.set('min_stars', filters.min_stars);
   if (filters.sort) params.set('sort', filters.sort);
   if (filters.active_only) params.set('active_only', 'true');
+  if (filters.os) params.set('os', filters.os);
 
   const url = `${API_BASE}/search?${params.toString()}`;
   const response = await fetch(url);

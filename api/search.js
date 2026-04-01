@@ -13,11 +13,19 @@ function buildGitHubHeaders() {
   return headers;
 }
 
-async function fetchGitHubRepos(query, { lang, min_stars, sort, active_only, page } = {}) {
+const OS_TOPIC_MAP = {
+  linux:          'linux',
+  windows:        'windows',
+  macos:          'macos',
+  'cross-platform': 'cross-platform',
+};
+
+async function fetchGitHubRepos(query, { lang, min_stars, sort, active_only, os, page } = {}) {
   // Build GitHub search qualifier string
   let q = query;
   if (lang) q += ` language:${lang}`;
   if (min_stars && Number(min_stars) > 0) q += ` stars:>=${min_stars}`;
+  if (os && OS_TOPIC_MAP[os]) q += ` topic:${OS_TOPIC_MAP[os]}`;
   if (active_only) {
     const sixMonthsAgo = new Date(Date.now() - 1000 * 60 * 60 * 24 * 180)
       .toISOString()
@@ -232,6 +240,7 @@ export default async function handler(req, res) {
         min_stars: req.query?.min_stars || 0,
         sort: (req.query?.sort || 'stars').trim(),
         active_only: req.query?.active_only === 'true',
+        os: (req.query?.os || '').trim(),
         page: req.query?.page || 1,
       };
       const githubData = await fetchGitHubRepos(q, filters);

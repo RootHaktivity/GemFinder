@@ -63,6 +63,8 @@ function App() {
       else url.searchParams.delete('sort');
       if (filters.active_only) url.searchParams.set('active_only', 'true');
       else url.searchParams.delete('active_only');
+      if (filters.os) url.searchParams.set('os', filters.os);
+      else url.searchParams.delete('os');
       window.history.pushState({}, '', url);
 
       try {

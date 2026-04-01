@@ -5,6 +5,14 @@ const LANGUAGES = [
   'C', 'C++', 'Java', 'Shell', 'Ruby', 'PHP', 'Swift', 'Kotlin', 'Zig',
 ];
 
+const OS_OPTIONS = [
+  { value: '',               label: 'Any OS' },
+  { value: 'linux',         label: '🐧 Linux' },
+  { value: 'windows',       label: '🪟 Windows' },
+  { value: 'macos',         label: '🍎 macOS' },
+  { value: 'cross-platform', label: '🌐 Cross-platform' },
+];
+
 const SORT_OPTIONS = [
   { value: 'stars',   label: '⭐ Most Stars' },
   { value: 'updated', label: '🕐 Recently Updated' },
@@ -27,6 +35,7 @@ const DEFAULT_FILTERS = {
   min_stars: 0,
   sort: 'stars',
   active_only: false,
+  os: '',
 };
 
 export default function SearchBar({ onSearch, onSurprise, loading, history = [], onRemoveHistory }) {
@@ -54,7 +63,8 @@ export default function SearchBar({ onSearch, onSurprise, loading, history = [],
     filters.lang !== '' ||
     filters.min_stars > 0 ||
     filters.sort !== 'stars' ||
-    filters.active_only;
+    filters.active_only ||
+    filters.os !== '';
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -163,6 +173,24 @@ export default function SearchBar({ onSearch, onSurprise, loading, history = [],
                   className="w-full bg-gray-900 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500"
                 >
                   {SORT_OPTIONS.map((o) => (
+                    <option key={o.value} value={o.value}>
+                      {o.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* OS Compatibility */}
+              <div>
+                <label className="block text-xs text-gray-400 mb-1.5 font-medium uppercase tracking-wide">
+                  OS Compatibility
+                </label>
+                <select
+                  value={filters.os}
+                  onChange={(e) => setFilter('os', e.target.value)}
+                  className="w-full bg-gray-900 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500"
+                >
+                  {OS_OPTIONS.map((o) => (
                     <option key={o.value} value={o.value}>
                       {o.label}
                     </option>

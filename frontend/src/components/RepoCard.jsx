@@ -1,5 +1,19 @@
 import { useState } from 'react';
 
+// OS → badge mapping (detected from topics)
+const OS_BADGES = [
+  { topic: 'linux',          icon: '🐧', label: 'Linux' },
+  { topic: 'windows',        icon: '🪟', label: 'Windows' },
+  { topic: 'macos',          icon: '🍎', label: 'macOS' },
+  { topic: 'cross-platform', icon: '🌐', label: 'Cross-platform' },
+  { topic: 'multiplatform',  icon: '🌐', label: 'Multi-platform' },
+  { topic: 'unix',           icon: '🖥️', label: 'Unix' },
+];
+
+function detectOS(topics = []) {
+  return OS_BADGES.filter((b) => topics.includes(b.topic));
+}
+
 // Language → color dot mapping
 const LANG_COLORS = {
   JavaScript: '#f1e05a',
@@ -169,6 +183,24 @@ export default function RepoCard({ repo, isBookmarked, onToggleBookmark }) {
             </span>
           )}
         </div>
+
+        {/* OS compatibility badges */}
+        {(() => {
+          const osBadges = detectOS(repo.topics);
+          return osBadges.length > 0 ? (
+            <div className="flex flex-wrap gap-1.5 mt-2">
+              {osBadges.map((b) => (
+                <span
+                  key={b.topic}
+                  className="inline-flex items-center gap-1 text-xs bg-gray-700 bg-opacity-60 text-gray-300 border border-gray-600 rounded-full px-2 py-0.5"
+                  title={`Compatible with ${b.label}`}
+                >
+                  {b.icon} {b.label}
+                </span>
+              ))}
+            </div>
+          ) : null;
+        })()}
       </div>
 
       {/* Gem Score badge */}
