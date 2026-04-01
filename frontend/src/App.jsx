@@ -116,7 +116,7 @@ function App() {
             <div className="flex items-center gap-2">
               <span className="text-2xl">💎</span>
               <h1 className="text-2xl font-bold bg-gradient-to-r from-emerald-400 via-green-400 to-cyan-400 bg-clip-text text-transparent">
-                Hidden Gem Search
+                GemFinder
               </h1>
             </div>
 
@@ -345,7 +345,7 @@ function App() {
       <footer className="border-t border-slate-700/50 bg-slate-950/70 backdrop-blur mt-auto shadow-lg shadow-cyan-500/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <p className="text-slate-400 text-sm text-center">
-            Built with ❤️ · React + Vite · Hugging Face AI · Vercel + GitHub Pages · Zero cost.
+            Developed by Leegion @ Roothaktivity
           </p>
         </div>
       </footer>
