@@ -54,6 +54,8 @@ vercel dev
 vercel
 ```
 
+**⚠️ IMPORTANT:** After deploying to Vercel, you **MUST** add `HF_TOKEN` to your Vercel environment variables for AI summaries to work. See [VERCEL_SETUP.md](VERCEL_SETUP.md) for detailed instructions.
+
 ### Frontend Setup
 
 ```bash
