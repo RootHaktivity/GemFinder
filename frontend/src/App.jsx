@@ -65,6 +65,8 @@ function App() {
       else url.searchParams.delete('active_only');
       if (filters.os) url.searchParams.set('os', filters.os);
       else url.searchParams.delete('os');
+      if (filters.category) url.searchParams.set('category', filters.category);
+      else url.searchParams.delete('category');
       window.history.pushState({}, '', url);
 
       try {

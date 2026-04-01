@@ -1,4 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+
+const API_BASE = import.meta.env.PROD
+  ? 'https://github-search-git-main-sadisticpentester-5972s-projects.vercel.app/api'
+  : '/api';
 
 const LANGUAGES = [
   'Any', 'Python', 'JavaScript', 'TypeScript', 'Rust', 'Go',
@@ -36,12 +40,72 @@ const DEFAULT_FILTERS = {
   sort: 'stars',
   active_only: false,
   os: '',
+  category: '',
 };
 
 export default function SearchBar({ onSearch, onSurprise, loading, history = [], onRemoveHistory }) {
   const [query, setQuery] = useState('');
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
+
+  // Category state
+  const [builtinCategories, setBuiltinCategories] = useState([]);
+  const [customCategories, setCustomCategories] = useState([]);
+  const [catLoading, setCatLoading] = useState(false);
+  const [showAddCat, setShowAddCat] = useState(false);
+  const [newCatValue, setNewCatValue] = useState('');
+  const [newCatLabel, setNewCatLabel] = useState('');
+  const [catSubmitting, setCatSubmitting] = useState(false);
+  const [catError, setCatError] = useState('');
+  const [catSuccess, setCatSuccess] = useState('');
+
+  // Fetch categories on mount
+  useEffect(() => {
+    setCatLoading(true);
+    fetch(`${API_BASE}/categories`)
+      .then((r) => r.json())
+      .then((data) => {
+        setBuiltinCategories(data.builtin || []);
+        setCustomCategories(data.custom || []);
+      })
+      .catch(() => {
+        // silently fail — builtin list stays empty, user can still search
+      })
+      .finally(() => setCatLoading(false));
+  }, []);
+
+  const handleAddCategory = async (e) => {
+    e.preventDefault();
+    if (!newCatValue.trim()) return;
+    setCatSubmitting(true);
+    setCatError('');
+    setCatSuccess('');
+
+    try {
+      const res = await fetch(`${API_BASE}/categories`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ category: newCatValue.trim(), label: newCatLabel.trim() }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setCatError(data.error || 'Failed to add category.');
+      } else {
+        setCustomCategories(data.custom || []);
+        setCatSuccess(`"${newCatValue.trim()}" added! It's now visible to all users.`);
+        setNewCatValue('');
+        setNewCatLabel('');
+        setTimeout(() => {
+          setShowAddCat(false);
+          setCatSuccess('');
+        }, 2500);
+      }
+    } catch {
+      setCatError('Network error. Please try again.');
+    } finally {
+      setCatSubmitting(false);
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -64,7 +128,8 @@ export default function SearchBar({ onSearch, onSurprise, loading, history = [],
     filters.min_stars > 0 ||
     filters.sort !== 'stars' ||
     filters.active_only ||
-    filters.os !== '';
+    filters.os !== '' ||
+    filters.category !== '';
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -196,6 +261,86 @@ export default function SearchBar({ onSearch, onSurprise, loading, history = [],
                     </option>
                   ))}
                 </select>
+              </div>
+
+              {/* Category */}
+              <div className="sm:col-span-2">
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="block text-xs text-gray-400 font-medium uppercase tracking-wide">
+                    Category
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => { setShowAddCat((v) => !v); setCatError(''); setCatSuccess(''); }}
+                    className="text-xs text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-1"
+                  >
+                    {showAddCat ? '✕ Cancel' : '➕ Add Custom'}
+                  </button>
+                </div>
+
+                <select
+                  value={filters.category}
+                  onChange={(e) => setFilter('category', e.target.value)}
+                  disabled={catLoading}
+                  className="w-full bg-gray-900 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500 disabled:opacity-50"
+                >
+                  <option value="">Any Category</option>
+                  {builtinCategories.length > 0 && (
+                    <optgroup label="── Built-in ──">
+                      {builtinCategories.map((c) => (
+                        <option key={c.value} value={c.value}>{c.label}</option>
+                      ))}
+                    </optgroup>
+                  )}
+                  {customCategories.length > 0 && (
+                    <optgroup label="── Community ──">
+                      {customCategories.map((c) => (
+                        <option key={c.value} value={c.value}>{c.label}</option>
+                      ))}
+                    </optgroup>
+                  )}
+                </select>
+
+                {/* Add custom category form */}
+                {showAddCat && (
+                  <form
+                    onSubmit={handleAddCategory}
+                    className="mt-3 p-3 bg-gray-900 border border-gray-600 rounded-lg space-y-2"
+                  >
+                    <p className="text-xs text-gray-400">
+                      Add a topic-based category. It will be visible to <span className="text-blue-400 font-medium">all users</span> once saved.
+                    </p>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={newCatValue}
+                        onChange={(e) => setNewCatValue(e.target.value)}
+                        placeholder="topic-slug (e.g. blockchain)"
+                        maxLength={30}
+                        className="flex-1 bg-gray-800 border border-gray-600 rounded-lg px-3 py-1.5 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                        disabled={catSubmitting}
+                      />
+                      <input
+                        type="text"
+                        value={newCatLabel}
+                        onChange={(e) => setNewCatLabel(e.target.value)}
+                        placeholder="Display name (optional)"
+                        maxLength={40}
+                        className="flex-1 bg-gray-800 border border-gray-600 rounded-lg px-3 py-1.5 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                        disabled={catSubmitting}
+                      />
+                      <button
+                        type="submit"
+                        disabled={catSubmitting || !newCatValue.trim()}
+                        className="px-4 py-1.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm rounded-lg transition-colors whitespace-nowrap"
+                      >
+                        {catSubmitting ? '⏳' : '✓ Save'}
+                      </button>
+                    </div>
+                    {catError && <p className="text-xs text-red-400">{catError}</p>}
+                    {catSuccess && <p className="text-xs text-green-400">✅ {catSuccess}</p>}
+                  </form>
+                )}
               </div>
 
               {/* Active Only toggle */}

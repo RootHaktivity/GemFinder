@@ -20,12 +20,17 @@ const OS_TOPIC_MAP = {
   'cross-platform': 'cross-platform',
 };
 
-async function fetchGitHubRepos(query, { lang, min_stars, sort, active_only, os, page } = {}) {
+async function fetchGitHubRepos(query, { lang, min_stars, sort, active_only, os, category, page } = {}) {
   // Build GitHub search qualifier string
   let q = query;
   if (lang) q += ` language:${lang}`;
   if (min_stars && Number(min_stars) > 0) q += ` stars:>=${min_stars}`;
   if (os && OS_TOPIC_MAP[os]) q += ` topic:${OS_TOPIC_MAP[os]}`;
+  if (category) {
+    // Sanitize: only alphanumeric + hyphens, max 30 chars
+    const safeCat = category.toLowerCase().replace(/[^a-z0-9-]/g, '-').slice(0, 30);
+    if (safeCat) q += ` topic:${safeCat}`;
+  }
   if (active_only) {
     const sixMonthsAgo = new Date(Date.now() - 1000 * 60 * 60 * 24 * 180)
       .toISOString()
@@ -275,6 +280,7 @@ export default async function handler(req, res) {
         sort: (req.query?.sort || 'stars').trim(),
         active_only: req.query?.active_only === 'true',
         os: (req.query?.os || '').trim(),
+        category: (req.query?.category || '').trim(),
         page: req.query?.page || 1,
       };
       const githubData = await fetchGitHubRepos(q, filters);
