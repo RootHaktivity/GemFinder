@@ -1,6 +1,12 @@
 {
   "version": 2,
+  "public": "public",
   "routes": [
+    {
+      "src": "/(.*)",
+      "methods": ["GET"],
+      "continue": true
+    },
     {
       "src": "/api/(.*)",
       "dest": "/api/$1"
